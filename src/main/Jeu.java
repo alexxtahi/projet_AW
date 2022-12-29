@@ -12,6 +12,7 @@ public class Jeu {
 	private int indexJoueurActif; // l'indice du joueur actif: 1 = rouge, 2 = bleu
 	// l'indice 0 est reserve au neutre, qui ne joue pas mais peut posseder des
 	// proprietes
+	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
 
 	public Jeu(String fileName) throws Exception {
 		// appel au parseur, qui renvoie un tableau de String
@@ -72,31 +73,40 @@ public class Jeu {
 	}
 
 	public void drawGameCursor() {
-		Affichage.dessineCurseur(0, 0); // affiche le curseau en (0,0), a modifier
+		Affichage.dessineCurseur(positionCurseur[0], positionCurseur[1]); // affiche le curseau en (0,0), a modifier
 	}
 
 	public void update() {
+
 		AssociationTouches toucheSuivante = AssociationTouches.trouveProchaineEntree(); // cette fonction boucle jusqu'a
 																						// la prochaine entree de
 																						// l'utilisateur
 		if (toucheSuivante.isHaut()) {
 			// TODO: deplacer le curseur vers le haut
 			System.out.println("Touche HAUT");
+			if (positionCurseur[1] < Config.longueurCarteYCases - 1)
+				positionCurseur[1]++;
 			display();
 		}
 		if (toucheSuivante.isBas()) {
 			// TODO: deplacer le curseur vers le bas
 			System.out.println("Touche BAS");
+			if (positionCurseur[1] > 0)
+				positionCurseur[1]--;
 			display();
 		}
 		if (toucheSuivante.isGauche()) {
 			// TODO: deplacer le curseur vers la gauche
 			System.out.println("Touche GAUCHE");
+			if (positionCurseur[0] > 0)
+				positionCurseur[0]--;
 			display();
 		}
 		if (toucheSuivante.isDroite()) {
 			// TODO: deplacer le curseur vers la droite
 			System.out.println("Touche DROITE");
+			if (positionCurseur[0] < Config.longueurCarteXCases - 1)
+				positionCurseur[0]++;
 			display();
 		}
 
