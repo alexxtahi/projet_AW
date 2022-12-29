@@ -1,6 +1,12 @@
 /** package principal */
 package main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import entities.Propriete;
 import entities.Terrain;
 import librairies.AssociationTouches;
 import librairies.StdDraw;
@@ -15,24 +21,14 @@ public class Jeu {
 	// proprietes
 	String[][] carteString;
 	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
+	ArrayList<String> dicoTerrains, dicoProprietes;
 
 	public Jeu(String fileName) throws Exception {
 		// appel au parseur, qui renvoie un tableau de String
 		carteString = ParseurCartes.parseCarte(fileName);
-		// System.out.println("Terrain de position (1,2) : " + carteString[1][2]);
-		for (int i = 0; i < carteString.length; i++) {
-			for (int j = 0; j < carteString[0].length; j++) {
-				System.out.print(carteString[i][j]);
-				if (j != carteString[0].length) {
-					System.out.print(" | ");
-				} else {
-					System.out.println();
-				}
-			}
-			System.out.println();
-		}
-		// a vous de manipuler ce tableau de String pour le transformer en une carte
-		// avec vos propres classes, a l'aide de la methode split de la classe String
+		// configuration des types de terrains et de propriétés
+		dicoTerrains = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
+		dicoProprietes = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
 
 		Config.setDimension(carteString[0].length, carteString.length);
 		// initialise la configuration avec la longueur de la carte
@@ -56,8 +52,16 @@ public class Jeu {
 		// Dessine les images des terrains correspondants à chaque case
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
-				Terrain terrain = new Terrain(carteString[i][j]);
-				Affichage.dessineImageDansCase(j, i, Chemins.getCheminTerrain(terrain.getImage()));
+				String[] typeEtUnite = carteString[i][j].split(";"); // Ici on sépare le type de terrain des unités
+				// On vérifie si nous sommes sur un terrain ou une propriété
+				String[] typeEtJoueur = typeEtUnite[0].split(":"); // Type de terrain/propriété des joueurs
+				if (dicoTerrains.contains(typeEtJoueur[0])) {
+					Terrain terrain = new Terrain(typeEtJoueur[0]);
+					terrain.affiche(j, i);
+				} else if (dicoProprietes.contains(typeEtJoueur[0])) {
+					Propriete prop = new Propriete(typeEtJoueur[0], Integer.parseInt(typeEtJoueur[1]));
+					prop.affiche(j, i);
+				}
 			}
 		}
 

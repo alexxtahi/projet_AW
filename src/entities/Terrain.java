@@ -1,25 +1,26 @@
 package entities;
 
+import ressources.Affichage;
 import ressources.Chemins;
 
 public class Terrain {
     private String type;
     private String image;
 
-    public Terrain(String t) {
-        type = t;
-        switch (t) {
+    public Terrain(String type) {
+        this.type = type;
+        switch (type) {
             case "Foret":
-                image = Chemins.FICHIER_FORET;
+                image = Chemins.getCheminTerrain(Chemins.FICHIER_FORET);
                 break;
             case "Eau":
-                image = Chemins.FICHIER_EAU;
+                image = Chemins.getCheminTerrain(Chemins.FICHIER_EAU);
                 break;
             case "Montagne":
-                image = Chemins.FICHIER_MONTAGNE;
+                image = Chemins.getCheminTerrain(Chemins.FICHIER_MONTAGNE);
                 break;
             default:
-                image = Chemins.FICHIER_PLAINE;
+                image = Chemins.getCheminTerrain(Chemins.FICHIER_PLAINE);
                 break;
         }
     }
@@ -30,5 +31,13 @@ public class Terrain {
 
     public String getImage() {
         return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void affiche(int x, int y) {
+        Affichage.dessineImageDansCase(x, y, image);
     }
 }
