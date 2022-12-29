@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch StdDraw",
+            "request": "launch",
+            "mainClass": "librairies.StdDraw",
+            "projectName": "projet_AW"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

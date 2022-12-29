@@ -1,6 +1,7 @@
 /** package principal */
 package main;
 
+import entities.Terrain;
 import librairies.AssociationTouches;
 import librairies.StdDraw;
 import ressources.Config;
@@ -12,11 +13,13 @@ public class Jeu {
 	private int indexJoueurActif; // l'indice du joueur actif: 1 = rouge, 2 = bleu
 	// l'indice 0 est reserve au neutre, qui ne joue pas mais peut posseder des
 	// proprietes
+	String[][] carteString;
 	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
 
 	public Jeu(String fileName) throws Exception {
 		// appel au parseur, qui renvoie un tableau de String
-		String[][] carteString = ParseurCartes.parseCarte(fileName);
+		carteString = ParseurCartes.parseCarte(fileName);
+		// System.out.println("Terrain de position (1,2) : " + carteString[1][2]);
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
 				System.out.print(carteString[i][j]);
@@ -49,9 +52,14 @@ public class Jeu {
 	public void display() {
 		StdDraw.clear();
 		afficheStatutJeu();
-		Affichage.dessineImageDansCase(1, 1, Chemins.getCheminTerrain(Chemins.FICHIER_FORET)); // exemple d'affichage
-																								// d'une image de forêt
-																								// dans la case (1,1)
+
+		// Dessine les images des terrains correspondants à chaque case
+		for (int i = 0; i < carteString.length; i++) {
+			for (int j = 0; j < carteString[0].length; j++) {
+				Terrain terrain = new Terrain(carteString[i][j]);
+				Affichage.dessineImageDansCase(j, i, Chemins.getCheminTerrain(terrain.getImage()));
+			}
+		}
 
 		Affichage.dessineImageDansCase(1, 1,
 				Chemins.getCheminFleche(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_DEBUT));
@@ -86,28 +94,24 @@ public class Jeu {
 			System.out.println("Touche HAUT");
 			if (positionCurseur[1] < Config.longueurCarteYCases - 1)
 				positionCurseur[1]++;
-			display();
 		}
 		if (toucheSuivante.isBas()) {
 			// TODO: deplacer le curseur vers le bas
 			System.out.println("Touche BAS");
 			if (positionCurseur[1] > 0)
 				positionCurseur[1]--;
-			display();
 		}
 		if (toucheSuivante.isGauche()) {
 			// TODO: deplacer le curseur vers la gauche
 			System.out.println("Touche GAUCHE");
 			if (positionCurseur[0] > 0)
 				positionCurseur[0]--;
-			display();
 		}
 		if (toucheSuivante.isDroite()) {
 			// TODO: deplacer le curseur vers la droite
 			System.out.println("Touche DROITE");
 			if (positionCurseur[0] < Config.longueurCarteXCases - 1)
 				positionCurseur[0]++;
-			display();
 		}
 
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
@@ -120,7 +124,8 @@ public class Jeu {
 				System.out.println("FIN DE TOUR");
 			}
 
-			display();
 		}
+		// Actualisation de la carte
+		display();
 	}
 }
