@@ -4,6 +4,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cases.Propriete;
@@ -22,21 +23,27 @@ public class Jeu {
 	// l'indice 0 est reserve au neutre, qui ne joue pas mais peut posseder des
 	// proprietes
 	private String[][] carteString;
+	private List<Joueur> joueurs;
+	private List<Terrain> terrains;
 	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
-	private ArrayList<String> dicoTypesTerrain, dicoTypesPropriete;
-	private Map<String, Unite> unites;
+	private List<String> dicoTypesTerrain, dicoTypesPropriete;
 
 	public Jeu(String fileName) throws Exception {
 		// Appel au parseur, qui renvoie un tableau de String
 		carteString = ParseurCartes.parseCarte(fileName);
 		// Configs de départ
+		terrains = new ArrayList<Terrain>();
 		dicoTypesTerrain = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
 		dicoTypesPropriete = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
-		unites = new HashMap<String, Unite>();
+
+		joueurs = new ArrayList<Joueur>();
+		joueurs.add(new Joueur(1));
+		joueurs.add(new Joueur(2));
+
+		genererCases();
 
 		Config.setDimension(carteString[0].length, carteString.length);
 		// Initialise la configuration avec la longueur de la carte
-
 		indexJoueurActif = 1; // rouge commence
 	}
 
@@ -47,12 +54,6 @@ public class Jeu {
 	public void afficheStatutJeu() {
 		Affichage.videZoneTexte();
 		Affichage.afficheTexteDescriptif("Status du jeu");
-	}
-
-	public void afficheUnite(String[] uniteEtJoueur, int x, int y) {
-		// System.out.println("Unité -> " + uniteEtJoueur[0]);
-		Unite unite = new Infanterie(Integer.parseInt(uniteEtJoueur[1]));
-		unite.affiche(x, y);
 	}
 
 	public String[][] dispacthCaseString(String caseString) {
@@ -67,32 +68,44 @@ public class Jeu {
 		return dispacthTab;
 	}
 
+	public void genererCases() {
+		for (int i = 0; i < carteString.length; i++) {
+			for (int j = 0; j < carteString[0].length; j++) {
+				String[][] caseDispatchee = dispacthCaseString(carteString[j][i]);
+				// System.out.println(carteString[j][i]);
+				// Générer les terrains et propriétés
+				if (dicoTypesTerrain.contains(caseDispatchee[0][0])) {
+					terrains.add(new Terrain(caseDispatchee[0][0], j, i));
+				} else if (dicoTypesPropriete.contains(caseDispatchee[0][0])) {
+					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[0][1]) - 1);
+					joueurProprietaire.addPropriete(new Propriete(caseDispatchee[0][0], joueurProprietaire, j, i));
+				}
+				// Générer les unités
+			}
+		}
+	}
+
+	public void afficheCases() {
+		for (Terrain t : terrains) {
+			t.affiche();
+			System.out.println(t.getImage());
+		}
+		for (Joueur j : joueurs) {
+			for (Propriete p : j.getProprietes()) {
+				p.affiche();
+			}
+			for (Unite u : j.getUnites()) {
+				u.affiche();
+			}
+		}
+	}
+
 	public void display() {
 		StdDraw.clear();
 		afficheStatutJeu();
 
 		// Dessine les images des terrains correspondants à chaque case
-		for (int i = 0; i < carteString.length; i++) {
-			for (int j = 0; j < carteString[0].length; j++) {
-				dispacthCaseString(carteString[i][j]);
-				String[] typeEtUnite = carteString[i][j].split(";"); // Ici on sépare le type de terrain des unités
-				// Affichage des terrains & propriétés
-				// On vérifie si nous sommes sur un terrain ou une propriété
-				String[] typeEtJoueur = typeEtUnite[0].split(":"); // Type de terrain/propriété des joueurs
-				if (dicoTypesTerrain.contains(typeEtJoueur[0])) {
-					Terrain terrain = new Terrain(typeEtJoueur[0]);
-					terrain.affiche(j, i);
-				} else if (dicoTypesPropriete.contains(typeEtJoueur[0])) {
-					Propriete prop = new Propriete(typeEtJoueur[0], Integer.parseInt(typeEtJoueur[1]));
-					prop.affiche(j, i);
-				}
-				// Affichage des unités
-				if (typeEtUnite.length > 1) {
-					String[] uniteEtJoueur = typeEtUnite[1].split(":"); // Type de terrain/propriété des joueurs
-					afficheUnite(uniteEtJoueur, j, i);
-				}
-			}
-		}
+		afficheCases();
 
 		Affichage.dessineImageDansCase(1, 1,
 				Chemins.getCheminFleche(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_DEBUT));
@@ -149,22 +162,19 @@ public class Jeu {
 
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
-		if (toucheSuivante.isCaractere('t')) {
+		if (toucheSuivante.isCaractere('t')) { // Finir le tour du joueur actif
 			String[] options = { "Oui", "Non" };
 			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 1) == 0) {
 				// le choix 0, "Oui", a été selectionné
-				// TODO: passer au joueur suivant
 				System.out.println("FIN DE TOUR");
 			}
 
 		}
-		if (toucheSuivante.isEntree()) {
-			// TODO: sélectionner une unité
-			System.out.println("(" + positionCurseur[0] + "," + positionCurseur[1] + ") -> "
-					+ carteString[positionCurseur[1]][positionCurseur[0]]);
+		if (toucheSuivante.isEntree()) { // Action de la touche entrée
+			// Sélectionner une unité
+			TestJeu.afficheElementDansCase(positionCurseur, carteString);
 		}
-
-		// Actualisation de la carte
+		// Actualisation de l'affichage
 		display();
 	}
 }

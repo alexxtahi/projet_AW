@@ -6,9 +6,13 @@ import ressources.Chemins;
 public class Terrain {
     private String type;
     private String image;
+    private int[] position = { 0, 0 };
 
-    public Terrain(String type) {
+    public Terrain(String type, int x, int y) {
         this.type = type;
+        position[0] = x;
+        position[1] = y;
+        // Attribution d'image
         switch (type) {
             case "Foret":
                 image = Chemins.getCheminTerrain(Chemins.FICHIER_FORET);
@@ -37,7 +41,15 @@ public class Terrain {
         this.image = image;
     }
 
-    public void affiche(int x, int y) {
-        Affichage.dessineImageDansCase(x, y, image);
+    public int[] getPosition() {
+        return new int[] { position[0], position[1] };
+    }
+
+    public String getPositionString() {
+        return position[0] + "_" + position[1];
+    }
+
+    public void affiche() {
+        Affichage.dessineImageDansCase(position[0], position[1], image);
     }
 }

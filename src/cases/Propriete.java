@@ -1,28 +1,32 @@
 package cases;
 
+import main.Joueur;
 import ressources.Chemins;
 
 public class Propriete extends Terrain {
 
-    private int idJoueur;
+    private Joueur joueur;
+    private boolean disponible;
 
-    public Propriete(String type, int idJoueur) {
-        super(type);
-        this.idJoueur = idJoueur;
+    public Propriete(String type, Joueur joueur, int x, int y) {
+        super(type, x, y);
+        this.joueur = joueur;
+        this.disponible = false;
+        // Attribution d'image
         switch (type) {
             case "Ville":
-                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_VILLE, idJoueur));
+                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_VILLE, joueur.getId()));
                 break;
             case "Usine":
-                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_USINE, idJoueur));
+                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_USINE, joueur.getId()));
                 break;
             case "QG":
-                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_QG, idJoueur));
+                super.setImage(Chemins.getCheminPropriete(Chemins.FICHIER_QG, joueur.getId()));
                 break;
         }
     }
 
-    public int getIdJoueur() {
-        return idJoueur;
+    public Joueur getJoueur() {
+        return joueur;
     }
 }

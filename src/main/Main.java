@@ -1,6 +1,5 @@
 package main;
 
-import ressources.Affichage;
 import ressources.Chemins;
 
 import java.io.IOException;
