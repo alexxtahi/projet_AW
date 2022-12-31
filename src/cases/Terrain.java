@@ -1,4 +1,4 @@
-package entities;
+package cases;
 
 import ressources.Affichage;
 import ressources.Chemins;

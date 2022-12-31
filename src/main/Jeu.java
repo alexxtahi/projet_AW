@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import entities.Propriete;
-import entities.Terrain;
+import cases.Propriete;
+import cases.Terrain;
 import librairies.AssociationTouches;
 import librairies.StdDraw;
 import ressources.Config;
 import ressources.ParseurCartes;
+import unites.Infanterie;
+import unites.Unite;
 import ressources.Affichage;
 import ressources.Chemins;
 
@@ -19,19 +21,21 @@ public class Jeu {
 	private int indexJoueurActif; // l'indice du joueur actif: 1 = rouge, 2 = bleu
 	// l'indice 0 est reserve au neutre, qui ne joue pas mais peut posseder des
 	// proprietes
-	String[][] carteString;
+	private String[][] carteString;
 	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
-	ArrayList<String> dicoTerrains, dicoProprietes;
+	private ArrayList<String> dicoTypesTerrain, dicoTypesPropriete;
+	private Map<String, Unite> unites;
 
 	public Jeu(String fileName) throws Exception {
-		// appel au parseur, qui renvoie un tableau de String
+		// Appel au parseur, qui renvoie un tableau de String
 		carteString = ParseurCartes.parseCarte(fileName);
-		// configuration des types de terrains et de propriétés
-		dicoTerrains = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
-		dicoProprietes = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
+		// Configs de départ
+		dicoTypesTerrain = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
+		dicoTypesPropriete = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
+		unites = new HashMap<String, Unite>();
 
 		Config.setDimension(carteString[0].length, carteString.length);
-		// initialise la configuration avec la longueur de la carte
+		// Initialise la configuration avec la longueur de la carte
 
 		indexJoueurActif = 1; // rouge commence
 	}
@@ -45,6 +49,12 @@ public class Jeu {
 		Affichage.afficheTexteDescriptif("Status du jeu");
 	}
 
+	public void afficheUnite(String[] uniteEtJoueur, int x, int y) {
+		System.out.println("Unité -> " + uniteEtJoueur[0]);
+		Unite unite = new Infanterie(Integer.parseInt(uniteEtJoueur[1]));
+		unite.affiche(x, y);
+	}
+
 	public void display() {
 		StdDraw.clear();
 		afficheStatutJeu();
@@ -53,14 +63,20 @@ public class Jeu {
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
 				String[] typeEtUnite = carteString[i][j].split(";"); // Ici on sépare le type de terrain des unités
+				// Affichage des terrains & propriétés
 				// On vérifie si nous sommes sur un terrain ou une propriété
 				String[] typeEtJoueur = typeEtUnite[0].split(":"); // Type de terrain/propriété des joueurs
-				if (dicoTerrains.contains(typeEtJoueur[0])) {
+				if (dicoTypesTerrain.contains(typeEtJoueur[0])) {
 					Terrain terrain = new Terrain(typeEtJoueur[0]);
 					terrain.affiche(j, i);
-				} else if (dicoProprietes.contains(typeEtJoueur[0])) {
+				} else if (dicoTypesPropriete.contains(typeEtJoueur[0])) {
 					Propriete prop = new Propriete(typeEtJoueur[0], Integer.parseInt(typeEtJoueur[1]));
 					prop.affiche(j, i);
+				}
+				// Affichage des unités
+				if (typeEtUnite.length > 1) {
+					String[] uniteEtJoueur = typeEtUnite[1].split(":"); // Type de terrain/propriété des joueurs
+					afficheUnite(uniteEtJoueur, j, i);
 				}
 			}
 		}
