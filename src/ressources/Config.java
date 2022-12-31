@@ -20,7 +20,7 @@ public class Config {
      * Vous pouvez ensuite detecter l'appuie sur votre nouvelle touche avec la
      * methode AssociationTouches.isCaractere
      */
-    public static final char[] TOUCHES_PERTINENTES_CARACTERES = { 't' };
+    public static final char[] TOUCHES_PERTINENTES_CARACTERES = { 't', '\n' };
 
     /** Couleur de l'arriere plan du jeu, utile pour effacer */
     final protected static Color COULEUR_ARRIERE_PLAN = Color.white;

@@ -50,9 +50,21 @@ public class Jeu {
 	}
 
 	public void afficheUnite(String[] uniteEtJoueur, int x, int y) {
-		System.out.println("Unité -> " + uniteEtJoueur[0]);
+		// System.out.println("Unité -> " + uniteEtJoueur[0]);
 		Unite unite = new Infanterie(Integer.parseInt(uniteEtJoueur[1]));
 		unite.affiche(x, y);
+	}
+
+	public String[][] dispacthCaseString(String caseString) {
+		String[][] dispacthTab = new String[2][2];
+		String[] caseEtUnite = caseString.split(";");
+		for (int i = 0; i < caseEtUnite.length; i++) {
+			String[] caseEtJoueur = caseEtUnite[i].split(":");
+			for (int j = 0; j < caseEtJoueur.length; j++) {
+				dispacthTab[i][j] = caseEtJoueur[j];
+			}
+		}
+		return dispacthTab;
 	}
 
 	public void display() {
@@ -62,6 +74,7 @@ public class Jeu {
 		// Dessine les images des terrains correspondants à chaque case
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
+				dispacthCaseString(carteString[i][j]);
 				String[] typeEtUnite = carteString[i][j].split(";"); // Ici on sépare le type de terrain des unités
 				// Affichage des terrains & propriétés
 				// On vérifie si nous sommes sur un terrain ou une propriété
@@ -111,25 +124,25 @@ public class Jeu {
 																						// l'utilisateur
 		if (toucheSuivante.isHaut()) {
 			// TODO: deplacer le curseur vers le haut
-			System.out.println("Touche HAUT");
+			// System.out.println("Touche HAUT");
 			if (positionCurseur[1] < Config.longueurCarteYCases - 1)
 				positionCurseur[1]++;
 		}
 		if (toucheSuivante.isBas()) {
 			// TODO: deplacer le curseur vers le bas
-			System.out.println("Touche BAS");
+			// System.out.println("Touche BAS");
 			if (positionCurseur[1] > 0)
 				positionCurseur[1]--;
 		}
 		if (toucheSuivante.isGauche()) {
 			// TODO: deplacer le curseur vers la gauche
-			System.out.println("Touche GAUCHE");
+			// System.out.println("Touche GAUCHE");
 			if (positionCurseur[0] > 0)
 				positionCurseur[0]--;
 		}
 		if (toucheSuivante.isDroite()) {
 			// TODO: deplacer le curseur vers la droite
-			System.out.println("Touche DROITE");
+			// System.out.println("Touche DROITE");
 			if (positionCurseur[0] < Config.longueurCarteXCases - 1)
 				positionCurseur[0]++;
 		}
@@ -138,13 +151,19 @@ public class Jeu {
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
 		if (toucheSuivante.isCaractere('t')) {
 			String[] options = { "Oui", "Non" };
-			if (Affichage.popup("Finir le tour de XXX?", options, true, 1) == 0) {
+			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 1) == 0) {
 				// le choix 0, "Oui", a été selectionné
 				// TODO: passer au joueur suivant
 				System.out.println("FIN DE TOUR");
 			}
 
 		}
+		if (toucheSuivante.isEntree()) {
+			// TODO: sélectionner une unité
+			System.out.println("(" + positionCurseur[0] + "," + positionCurseur[1] + ") -> "
+					+ carteString[positionCurseur[1]][positionCurseur[0]]);
+		}
+
 		// Actualisation de la carte
 		display();
 	}

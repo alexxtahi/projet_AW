@@ -14,6 +14,19 @@ On a utilisé les attributs Config.longueurCarteXCases et Config.longueurCarteYC
 
 2. Affichage des images de chaque case
 
-Pour cela on a transformé la variable carteString qui était dans le constructeur de la classe main.Jeu en attribut d'objet afin de l'utiliser dans la fonction display() pour afficher l'image correspondant au terrain associé à chaque case.
-Nous avons créé la classe Terrain dans le dossier entities afin de gérer les terrains, leurs types et leurs images.
+Pour cela on a transformé la variable carteString qui était dans le constructeur de la classe main.Jeu en attribut d'objet afin de l'utiliser dans la fonction display() pour afficher l'image correspondante à chaque case.
+Nous avons codé la fonction dispacthCaseString() dans laquelle nous avons utilisé la méthode split() des String afin de dispatcher, pour chaque case, le type de terrain (ou propiété et le joueur qui la possède) et l'unité potentiellement présente sur la case.
+
+2.1. Affichage des terrains et propiétés
+
+Nous avons créé les classes Terrain et Propriete dans le dossier /src/cases afin de gérer dynamiquement les terrains, les propriétés, leurs types et leurs images.
+Le constructeur de la classe Terrain attribut automatiquement l'image correspondant au type de terrain
+Une méthode affichage() à été créée dans cette classe pour faciler l'affichage des terrains sur la fenêtre du jeu.
+
+2.2. Affichage des unités
+
+Chaque unité a eue droit à une classe dans le dossier /src/unites qui héritent toutes de la super classe Unite, contenant toutes les propriétés et méthodes communes aux unités du jeu.
+Elle dispose elle aussi d'une méthode affiche() jouant le même rôle que la méthode du même nom dans la classe Terrain.
+
+
 
