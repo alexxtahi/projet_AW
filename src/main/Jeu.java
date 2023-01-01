@@ -37,8 +37,9 @@ public class Jeu {
 		dicoTypesPropriete = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
 
 		joueurs = new ArrayList<Joueur>();
-		joueurs.add(new Joueur(1));
-		joueurs.add(new Joueur(2));
+		joueurs.add(new Joueur(0)); // Joueur neutre
+		joueurs.add(new Joueur(1)); // Joueur rouge
+		joueurs.add(new Joueur(2)); // Joueur bleu
 
 		genererCases();
 
@@ -71,16 +72,23 @@ public class Jeu {
 	public void genererCases() {
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
-				String[][] caseDispatchee = dispacthCaseString(carteString[j][i]);
-				// System.out.println(carteString[j][i]);
+				String[][] caseDispatchee = dispacthCaseString(carteString[i][j]);
 				// Générer les terrains et propriétés
 				if (dicoTypesTerrain.contains(caseDispatchee[0][0])) {
 					terrains.add(new Terrain(caseDispatchee[0][0], j, i));
 				} else if (dicoTypesPropriete.contains(caseDispatchee[0][0])) {
-					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[0][1]) - 1);
-					joueurProprietaire.addPropriete(new Propriete(caseDispatchee[0][0], joueurProprietaire, j, i));
+					Joueur joueurProprietaire = (caseDispatchee[0][1].equals("0")) ? joueurs.get(0)
+							: joueurs.get(Integer.parseInt(caseDispatchee[0][1]));
+					Propriete nouvellePropriete = new Propriete(caseDispatchee[0][0], joueurProprietaire, j, i);
+					joueurProprietaire.addPropriete(nouvellePropriete);
 				}
 				// Générer les unités
+				if (caseDispatchee[1][0] != null) {
+					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[1][1]));
+					Unite nouvelleUnite = Unite.genererUniteParType(caseDispatchee[1][0],
+							joueurProprietaire, j, i);
+					joueurProprietaire.addUnite(nouvelleUnite);
+				}
 			}
 		}
 	}
@@ -88,7 +96,6 @@ public class Jeu {
 	public void afficheCases() {
 		for (Terrain t : terrains) {
 			t.affiche();
-			System.out.println(t.getImage());
 		}
 		for (Joueur j : joueurs) {
 			for (Propriete p : j.getProprietes()) {

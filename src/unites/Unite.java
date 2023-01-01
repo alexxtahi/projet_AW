@@ -15,7 +15,6 @@ public class Unite {
     private boolean disponible;
 
     public Unite(Joueur joueur, String image, int pointsDep, int prix, int x, int y) {
-
         this.joueur = joueur;
         this.image = image;
         pointsVie = 10;
@@ -24,7 +23,29 @@ public class Unite {
         position[0] = x;
         position[1] = y;
         this.disponible = false;
+    }
 
+    public static Unite genererUniteParType(String type, Joueur joueur, int x, int y) {
+        switch (type) {
+            case "Artillerie":
+                return new Artillerie(joueur, x, y);
+            case "Bazooka":
+                return new Bazooka(joueur, x, y);
+            case "Bombardier":
+                return new Bombardier(joueur, x, y);
+            case "Convoit":
+                return new Convoit(joueur, x, y);
+            case "DCA":
+                return new DCA(joueur, x, y);
+            case "Helico":
+                return new Helico(joueur, x, y);
+            case "Infanterie":
+                return new Infanterie(joueur, x, y);
+            case "Tank":
+                return new Tank(joueur, x, y);
+            default:
+                return null;
+        }
     }
 
     public double getPointsVie() {

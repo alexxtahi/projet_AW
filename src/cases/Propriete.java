@@ -29,4 +29,9 @@ public class Propriete extends Terrain {
     public Joueur getJoueur() {
         return joueur;
     }
+
+    public void setJoueur(Joueur joueur) {
+        this.joueur = joueur;
+    }
+
 }
