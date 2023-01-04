@@ -85,6 +85,14 @@ public class Unite {
         position[1] = y;
     }
 
+    public boolean estDispo() {
+        return disponible;
+    }
+
+    public void changeDispo() {
+        disponible = !disponible;
+    }
+
     public void affiche() {
         Affichage.dessineImageDansCase(position[0],
                 position[1], Chemins.getCheminUnite(joueur.getId(), disponible, image));

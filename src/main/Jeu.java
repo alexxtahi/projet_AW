@@ -27,6 +27,7 @@ public class Jeu {
 	private List<Terrain> terrains;
 	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
 	private List<String> dicoTypesTerrain, dicoTypesPropriete;
+	private int round;
 
 	public Jeu(String fileName) throws Exception {
 		// Appel au parseur, qui renvoie un tableau de String
@@ -37,26 +38,47 @@ public class Jeu {
 		dicoTypesPropriete = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
 
 		joueurs = new ArrayList<Joueur>();
-		joueurs.add(new Joueur(0)); // Joueur neutre
-		joueurs.add(new Joueur(1)); // Joueur rouge
-		joueurs.add(new Joueur(2)); // Joueur bleu
+		joueurs.add(new Joueur(0)); // Joueur neutre 0
+		joueurs.add(new Joueur(1)); // Joueur rouge 1
+		joueurs.add(new Joueur(2)); // Joueur bleu 2
 
 		genererCases();
 
 		Config.setDimension(carteString[0].length, carteString.length);
 		// Initialise la configuration avec la longueur de la carte
 		indexJoueurActif = 1; // rouge commence
+		round = 1; // 1er round
 	}
 
+	/**
+	 * Indique l'état de la partie
+	 *
+	 * @return true si la partie est terminée, false sinon
+	 */
 	public boolean isOver() {
 		return false;
 	}
 
+	/**
+	 * Affiche les détails de la partie en cours
+	 */
 	public void afficheStatutJeu() {
+
+		String msg = "Round : " + round;
+		msg += " - Joueur actuel : " + ((indexJoueurActif == 1) ? "Rouge" : "Bleu");
+		Joueur joueurActif = joueurs.get(indexJoueurActif);
+		msg += " - Argent : " + joueurActif.getArgent();
 		Affichage.videZoneTexte();
-		Affichage.afficheTexteDescriptif("Status du jeu");
+		Affichage.afficheTexteDescriptif(msg);
 	}
 
+	/**
+	 * Converti une case représentée par une chaine de caractère en matrice
+	 *
+	 * @param caseString la chaine de caratère d'une case
+	 * @return une matrice contenant le type de la case et l'unité potentiellement
+	 *         présente sur cette case
+	 */
 	public String[][] dispacthCaseString(String caseString) {
 		String[][] dispacthTab = new String[2][2];
 		String[] caseEtUnite = caseString.split(";");
@@ -69,6 +91,9 @@ public class Jeu {
 		return dispacthTab;
 	}
 
+	/**
+	 * Utilise la matrice de string de la carte pour générer les cases
+	 */
 	public void genererCases() {
 		for (int i = 0; i < carteString.length; i++) {
 			for (int j = 0; j < carteString[0].length; j++) {
@@ -87,12 +112,19 @@ public class Jeu {
 					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[1][1]));
 					Unite nouvelleUnite = Unite.genererUniteParType(caseDispatchee[1][0],
 							joueurProprietaire, j, i);
+					nouvelleUnite.changeDispo();
 					joueurProprietaire.addUnite(nouvelleUnite);
 				}
 			}
 		}
+		// Définir l'argent des joueurs
+		for (Joueur j : joueurs)
+			j.addMoney();
 	}
 
+	/**
+	 * Affiche dans la fenêtre l'image de chaque case
+	 */
 	public void afficheCases() {
 		for (Terrain t : terrains) {
 			t.affiche();
@@ -110,10 +142,9 @@ public class Jeu {
 	public void display() {
 		StdDraw.clear();
 		afficheStatutJeu();
-
-		// Dessine les images des terrains correspondants à chaque case
 		afficheCases();
 
+		// ! TEST
 		Affichage.dessineImageDansCase(1, 1,
 				Chemins.getCheminFleche(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_DEBUT));
 		Affichage.dessineImageDansCase(2, 1, Chemins.getCheminFleche(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_HAUT));
@@ -121,10 +152,12 @@ public class Jeu {
 		Affichage.dessineImageDansCase(2, 3, Chemins.getCheminFleche(Chemins.DIRECTION_BAS, Chemins.DIRECTION_FIN));
 
 		Affichage.dessineImageDansCase(4, 4, Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_FIN));
+		// ! FIN TEST
 
-		Affichage.dessineGrille(); // affiche une grille, mais n'affiche rien dans les cases
-		drawGameCursor();
-		StdDraw.show(); // montre a l'ecran les changement demandes
+		Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
+		// les cases
+		drawGameCursor(); // Dessine le curseur sur la fenêtre
+		StdDraw.show(); // Montre a l'ecran les changement demandes
 	}
 
 	public void initialDisplay() {

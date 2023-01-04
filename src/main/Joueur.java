@@ -11,13 +11,23 @@ import unites.Unite;
 public class Joueur {
 
     private int id;
+    private int argent;
     private List<Unite> unites;
     private List<Propriete> proprietes;
 
     public Joueur(int id) {
         this.id = id;
+        this.argent = 0;
         unites = new ArrayList<Unite>();
         proprietes = new ArrayList<Propriete>();
+    }
+
+    public int getArgent() {
+        return argent;
+    }
+
+    public void addMoney() {
+        argent += proprietes.size() * 1000;
     }
 
     public int getId() {
