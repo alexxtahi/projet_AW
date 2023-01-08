@@ -6,13 +6,12 @@ public class TestJeu {
     /**
      * Affiche dans la console le contenu de la case sur laquelle le curseur est
      *
-     * @param positionCurseur un tableau d'entier contenant la position
-     *                        sur l'axe x et l'axe y du curseur
-     * @param carteString     la carte du jeu
+     * @param x           La position sur l'axe x du curseur
+     * @param y           La position sur l'axe y du curseur
+     * @param carteString la carte du jeu
      */
-    public static void afficheElementDansCase(int[] positionCurseur, String[][] carteString) {
-        System.out.println("(x: " + positionCurseur[0] + ", y: " + positionCurseur[1] + ") -> "
-                + carteString[positionCurseur[1]][positionCurseur[0]]);
+    public static void afficheElementDansCase(int x, int y, String[][] carteString) {
+        System.out.println("(x: " + x + ", y: " + y + ") -> " + carteString[y][x]);
     }
 
     /**

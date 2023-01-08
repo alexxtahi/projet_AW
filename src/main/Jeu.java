@@ -3,17 +3,18 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import cases.Propriete;
 import cases.Terrain;
 import librairies.AssociationTouches;
+import librairies.ChoisitTrajet;
+import librairies.Deplacement;
+import librairies.Etat;
+import librairies.NavigationLibre;
 import librairies.StdDraw;
 import ressources.Config;
 import ressources.ParseurCartes;
-import unites.Infanterie;
 import unites.Unite;
 import ressources.Affichage;
 import ressources.Chemins;
@@ -25,9 +26,9 @@ public class Jeu {
 	private String[][] carteString;
 	private List<Joueur> joueurs;
 	private List<Terrain> terrains;
-	private int[] positionCurseur = { 0, 0 }; // Coordonnées du curseur sur la carte
 	private List<String> dicoTypesTerrain, dicoTypesPropriete;
 	private int round;
+	private Etat etat;
 
 	public Jeu(String fileName) throws Exception {
 		// Appel au parseur, qui renvoie un tableau de String
@@ -43,6 +44,8 @@ public class Jeu {
 		joueurs.add(new Joueur(2)); // Joueur bleu 2
 
 		genererCases();
+
+		etat = new NavigationLibre(0, 0);
 
 		Config.setDimension(carteString[0].length, carteString.length);
 		// Initialise la configuration avec la longueur de la carte
@@ -137,6 +140,11 @@ public class Jeu {
 				u.affiche();
 			}
 		}
+		if (etat instanceof ChoisitTrajet) {
+			for (Deplacement d : etat.getDeplacements()) {
+				d.affiche();
+			}
+		}
 	}
 
 	public void display() {
@@ -167,7 +175,7 @@ public class Jeu {
 	}
 
 	public void drawGameCursor() {
-		Affichage.dessineCurseur(positionCurseur[0], positionCurseur[1]); // affiche le curseau en (0,0), a modifier
+		Affichage.dessineCurseur(etat.getCurseurX(), etat.getCurseurY()); // affiche le curseau en (0,0), a modifier
 	}
 
 	public void update() {
@@ -175,30 +183,14 @@ public class Jeu {
 		AssociationTouches toucheSuivante = AssociationTouches.trouveProchaineEntree(); // cette fonction boucle jusqu'a
 																						// la prochaine entree de
 																						// l'utilisateur
-		if (toucheSuivante.isHaut()) {
-			// TODO: deplacer le curseur vers le haut
-			// System.out.println("Touche HAUT");
-			if (positionCurseur[1] < Config.longueurCarteYCases - 1)
-				positionCurseur[1]++;
-		}
-		if (toucheSuivante.isBas()) {
-			// TODO: deplacer le curseur vers le bas
-			// System.out.println("Touche BAS");
-			if (positionCurseur[1] > 0)
-				positionCurseur[1]--;
-		}
-		if (toucheSuivante.isGauche()) {
-			// TODO: deplacer le curseur vers la gauche
-			// System.out.println("Touche GAUCHE");
-			if (positionCurseur[0] > 0)
-				positionCurseur[0]--;
-		}
-		if (toucheSuivante.isDroite()) {
-			// TODO: deplacer le curseur vers la droite
-			// System.out.println("Touche DROITE");
-			if (positionCurseur[0] < Config.longueurCarteXCases - 1)
-				positionCurseur[0]++;
-		}
+		if (toucheSuivante.isHaut())
+			etat = etat.actionHaut();
+		if (toucheSuivante.isBas())
+			etat = etat.actionBas();
+		if (toucheSuivante.isGauche())
+			etat = etat.actionGauche();
+		if (toucheSuivante.isDroite())
+			etat = etat.actionDroite();
 
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
@@ -212,7 +204,8 @@ public class Jeu {
 		}
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
-			TestJeu.afficheElementDansCase(positionCurseur, carteString);
+			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carteString);
+			etat = etat.actionEntree();
 		}
 		// Actualisation de l'affichage
 		display();
