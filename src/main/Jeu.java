@@ -13,11 +13,11 @@ import librairies.Deplacement;
 import librairies.Etat;
 import librairies.NavigationLibre;
 import librairies.StdDraw;
+import ressources.Affichage;
+import ressources.Chemins;
 import ressources.Config;
 import ressources.ParseurCartes;
 import unites.Unite;
-import ressources.Affichage;
-import ressources.Chemins;
 
 public class Jeu {
 	private int indexJoueurActif; // l'indice du joueur actif: 1 = rouge, 2 = bleu
@@ -29,6 +29,7 @@ public class Jeu {
 	private List<String> dicoTypesTerrain, dicoTypesPropriete;
 	private int round;
 	private Etat etat;
+	private Joueur joueurActif;
 
 	public Jeu(String fileName) throws Exception {
 		// Appel au parseur, qui renvoie un tableau de String
@@ -51,6 +52,8 @@ public class Jeu {
 		// Initialise la configuration avec la longueur de la carte
 		indexJoueurActif = 1; // rouge commence
 		round = 1; // 1er round
+		joueurActif = joueurs.get(indexJoueurActif);
+		joueurActif.addMoney();
 	}
 
 	/**
@@ -69,10 +72,14 @@ public class Jeu {
 
 		String msg = "Round : " + round;
 		msg += " - Joueur actuel : " + ((indexJoueurActif == 1) ? "Rouge" : "Bleu");
-		Joueur joueurActif = joueurs.get(indexJoueurActif);
+		// Joueur joueurActif = joueurs.get(indexJoueurActif);
+
 		msg += " - Argent : " + joueurActif.getArgent();
+
 		Affichage.videZoneTexte();
 		Affichage.afficheTexteDescriptif(msg);
+		System.out.println("Argent rouge = " + joueurs.get(1).getArgent());
+		System.out.println("Argent bleu = " + joueurs.get(2).getArgent());
 	}
 
 	/**
@@ -113,16 +120,15 @@ public class Jeu {
 				// Générer les unités
 				if (caseDispatchee[1][0] != null) {
 					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[1][1]));
-					Unite nouvelleUnite = Unite.genererUniteParType(caseDispatchee[1][0],
-							joueurProprietaire, j, i);
+					Unite nouvelleUnite = Unite.genererUniteParType(caseDispatchee[1][0], joueurProprietaire, j, i);
 					nouvelleUnite.changeDispo();
 					joueurProprietaire.addUnite(nouvelleUnite);
 				}
 			}
 		}
 		// Définir l'argent des joueurs
-		for (Joueur j : joueurs)
-			j.addMoney();
+		// for (Joueur j : joueurs)
+		// j.addMoney();
 	}
 
 	/**
@@ -178,6 +184,18 @@ public class Jeu {
 		Affichage.dessineCurseur(etat.getCurseurX(), etat.getCurseurY()); // affiche le curseau en (0,0), a modifier
 	}
 
+	public void changeJoueur() {
+		if (indexJoueurActif == 1) {
+			indexJoueurActif = 2;
+		} else {
+			indexJoueurActif = 1;
+			round++;
+
+		}
+		joueurActif = joueurs.get(indexJoueurActif);
+		joueurActif.addMoney();
+	}
+
 	public void update() {
 
 		AssociationTouches toucheSuivante = AssociationTouches.trouveProchaineEntree(); // cette fonction boucle jusqu'a
@@ -198,7 +216,8 @@ public class Jeu {
 			String[] options = { "Oui", "Non" };
 			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 1) == 0) {
 				// le choix 0, "Oui", a été selectionné
-				System.out.println("FIN DE TOUR");
+
+				this.changeJoueur();
 			}
 
 		}
