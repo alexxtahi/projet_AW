@@ -3,6 +3,8 @@ package librairies;
 import java.util.List;
 
 import java.util.LinkedList;
+
+import ressources.Chemins;
 import ressources.Config;
 
 public abstract class Etat {
@@ -19,12 +21,16 @@ public abstract class Etat {
     }
 
     public List<Deplacement> getDeplacements() {
-        // return List.copyOf(listeDeplacements);
         return new LinkedList<Deplacement>(listeDeplacements);
     }
 
     public void ajouteDeplacement(String debut, String fin) {
-        listeDeplacements.add(new Deplacement(debut, fin, getCurseurX(), getCurseurY()));
+        if (dernierDeplacement() == null) {
+            listeDeplacements.add(new Deplacement(Chemins.DIRECTION_DEBUT, fin, getCurseurX(), getCurseurY()));
+        } else {
+            dernierDeplacement().setFin(fin);
+            listeDeplacements.add(new Deplacement(debut, Chemins.DIRECTION_FIN, getCurseurX(), getCurseurY()));
+        }
     }
 
     // à revoir

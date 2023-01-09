@@ -154,7 +154,7 @@ public class Jeu {
 
 		// ! TEST
 		Affichage.dessineImageDansCase(1, 1,
-				Chemins.getCheminFleche(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_DEBUT));
+				Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_HAUT));
 		Affichage.dessineImageDansCase(2, 1, Chemins.getCheminFleche(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_HAUT));
 		Affichage.dessineImageDansCase(2, 2, Chemins.getCheminFleche(Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT));
 		Affichage.dessineImageDansCase(2, 3, Chemins.getCheminFleche(Chemins.DIRECTION_BAS, Chemins.DIRECTION_FIN));
@@ -162,7 +162,7 @@ public class Jeu {
 		Affichage.dessineImageDansCase(4, 4, Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_FIN));
 		// ! FIN TEST
 
-		Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
+		// Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
 		// les cases
 		drawGameCursor(); // Dessine le curseur sur la fenêtre
 		StdDraw.show(); // Montre a l'ecran les changement demandes
@@ -206,6 +206,9 @@ public class Jeu {
 			// Sélectionner une unité
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carteString);
 			etat = etat.actionEntree();
+
+			// if (carte[etat.getCurseurY()][etat.getCurseurX()] instanceof Unite) {
+			// }
 		}
 		// Actualisation de l'affichage
 		display();

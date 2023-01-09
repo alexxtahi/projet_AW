@@ -26,6 +26,11 @@ public class Deplacement {
         return fin;
     }
 
+    public void setFin(String nouvelleFin) {
+        fin = nouvelleFin;
+        image = Chemins.getCheminFleche(debut, nouvelleFin);
+    }
+
     public void affiche() {
         Affichage.dessineImageDansCase(x, y, image);
     }
