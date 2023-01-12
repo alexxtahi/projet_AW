@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cases.Case;
 import cases.Propriete;
 import cases.Terrain;
 import librairies.AssociationTouches;
@@ -23,37 +24,34 @@ public class Jeu {
 	private int indexJoueurActif; // l'indice du joueur actif: 1 = rouge, 2 = bleu
 	// l'indice 0 est reserve au neutre, qui ne joue pas mais peut posseder des
 	// proprietes
-	private String[][] carteString;
+	private Case[][] carte;
 	private List<Joueur> joueurs;
-	private List<Terrain> terrains;
-	private List<String> dicoTypesTerrain, dicoTypesPropriete;
+	private List<String> dicoTypesTerrain;
 	private int round;
 	private Etat etat;
 	private Joueur joueurActif;
 
 	public Jeu(String fileName) throws Exception {
-		// Appel au parseur, qui renvoie un tableau de String
-		carteString = ParseurCartes.parseCarte(fileName);
-		// Configs de départ
-		terrains = new ArrayList<Terrain>();
-		dicoTypesTerrain = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
-		dicoTypesPropriete = new ArrayList<String>(Arrays.asList("Usine", "Ville", "QG"));
 
+		// Initialisation des joueurs
 		joueurs = new ArrayList<Joueur>();
 		joueurs.add(new Joueur(0)); // Joueur neutre 0
 		joueurs.add(new Joueur(1)); // Joueur rouge 1
 		joueurs.add(new Joueur(2)); // Joueur bleu 2
-
-		genererCases();
-
-		etat = new NavigationLibre(0, 0);
-
-		Config.setDimension(carteString[0].length, carteString.length);
-		// Initialise la configuration avec la longueur de la carte
 		indexJoueurActif = 1; // rouge commence
-		round = 1; // 1er round
 		joueurActif = joueurs.get(indexJoueurActif);
-		joueurActif.addMoney();
+
+		// Création de la carte
+		dicoTypesTerrain = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
+		String[][] carteString = ParseurCartes.parseCarte(
+				fileName);
+		carte = new Case[carteString.length][];
+		Config.setDimension(carteString[0].length, carteString.length);
+		genererCases(carteString);
+
+		// Configs de départ
+		etat = new NavigationLibre(0, 0);
+		round = 1; // 1er round
 	}
 
 	/**
@@ -69,17 +67,13 @@ public class Jeu {
 	 * Affiche les détails de la partie en cours
 	 */
 	public void afficheStatutJeu() {
-
+		// Chargement du message
 		String msg = "Round : " + round;
 		msg += " - Joueur actuel : " + ((indexJoueurActif == 1) ? "Rouge" : "Bleu");
-		// Joueur joueurActif = joueurs.get(indexJoueurActif);
-
 		msg += " - Argent : " + joueurActif.getArgent();
-
+		// Affichage
 		Affichage.videZoneTexte();
 		Affichage.afficheTexteDescriptif(msg);
-		System.out.println("Argent rouge = " + joueurs.get(1).getArgent());
-		System.out.println("Argent bleu = " + joueurs.get(2).getArgent());
 	}
 
 	/**
@@ -103,49 +97,49 @@ public class Jeu {
 
 	/**
 	 * Utilise la matrice de string de la carte pour générer les cases
+	 *
+	 * @param caseString la matrice de String de la carte
 	 */
-	public void genererCases() {
+	public void genererCases(String[][] carteString) {
 		for (int i = 0; i < carteString.length; i++) {
+			carte[i] = new Case[carteString[i].length];
 			for (int j = 0; j < carteString[0].length; j++) {
 				String[][] caseDispatchee = dispacthCaseString(carteString[i][j]);
-				// Générer les terrains et propriétés
-				if (dicoTypesTerrain.contains(caseDispatchee[0][0])) {
-					terrains.add(new Terrain(caseDispatchee[0][0], j, i));
-				} else if (dicoTypesPropriete.contains(caseDispatchee[0][0])) {
-					Joueur joueurProprietaire = (caseDispatchee[0][1].equals("0")) ? joueurs.get(0)
+				// Générer le terrain ou la propriété
+				Terrain terrain = null;
+				Unite unite = null;
+				if (dicoTypesTerrain.contains(caseDispatchee[0][0])) { // Si on a un terrain
+					terrain = new Terrain(caseDispatchee[0][0], j, i);
+				} else { // Si on a une propriété
+					Joueur joueurProprietaire = (caseDispatchee[0][1].equals("0")) ? joueurs.get(0) // à modifier
 							: joueurs.get(Integer.parseInt(caseDispatchee[0][1]));
-					Propriete nouvellePropriete = new Propriete(caseDispatchee[0][0], joueurProprietaire, j, i);
-					joueurProprietaire.addPropriete(nouvellePropriete);
+					terrain = new Propriete(caseDispatchee[0][0], joueurProprietaire, j, i);
+					joueurProprietaire.addProp();
 				}
-				// Générer les unités
+				// Générer l'unité potentiellement présente
 				if (caseDispatchee[1][0] != null) {
 					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[1][1]));
-					Unite nouvelleUnite = Unite.genererUniteParType(caseDispatchee[1][0], joueurProprietaire, j, i);
-					nouvelleUnite.changeDispo();
-					joueurProprietaire.addUnite(nouvelleUnite);
+					unite = Unite.genererUniteParType(caseDispatchee[1][0], joueurProprietaire, j, i);
+					unite.changeDispo();
 				}
+				// Générer la case
+				carte[i][j] = new Case(terrain, unite, j, i);
 			}
 		}
-		// Définir l'argent des joueurs
-		// for (Joueur j : joueurs)
-		// j.addMoney();
+		joueurActif.addMoney();
+		TestJeu.afficheArgentDesJoueurs(joueurs);
 	}
 
 	/**
 	 * Affiche dans la fenêtre l'image de chaque case
 	 */
 	public void afficheCases() {
-		for (Terrain t : terrains) {
-			t.affiche();
-		}
-		for (Joueur j : joueurs) {
-			for (Propriete p : j.getProprietes()) {
-				p.affiche();
-			}
-			for (Unite u : j.getUnites()) {
-				u.affiche();
+		for (Case[] ligne : carte) {
+			for (Case c : ligne) {
+				c.affiche();
 			}
 		}
+
 		if (etat instanceof ChoisitTrajet) {
 			for (Deplacement d : etat.getDeplacements()) {
 				d.affiche();
@@ -168,7 +162,7 @@ public class Jeu {
 		Affichage.dessineImageDansCase(4, 4, Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_FIN));
 		// ! FIN TEST
 
-		// Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
+		Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
 		// les cases
 		drawGameCursor(); // Dessine le curseur sur la fenêtre
 		StdDraw.show(); // Montre a l'ecran les changement demandes
@@ -184,16 +178,18 @@ public class Jeu {
 		Affichage.dessineCurseur(etat.getCurseurX(), etat.getCurseurY()); // affiche le curseau en (0,0), a modifier
 	}
 
-	public void changeJoueur() {
+	public void changeTour() {
 		if (indexJoueurActif == 1) {
 			indexJoueurActif = 2;
 		} else {
 			indexJoueurActif = 1;
 			round++;
-
 		}
+		// Changer le joueur actif en fct du nouvel index
 		joueurActif = joueurs.get(indexJoueurActif);
+		// Augmenter l'argent du joueur en fct de ses propriétés
 		joueurActif.addMoney();
+		TestJeu.afficheArgentDesJoueurs(joueurs);
 	}
 
 	public void update() {
@@ -216,14 +212,13 @@ public class Jeu {
 			String[] options = { "Oui", "Non" };
 			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 1) == 0) {
 				// le choix 0, "Oui", a été selectionné
-
-				this.changeJoueur();
+				changeTour();
 			}
 
 		}
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
-			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carteString);
+			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
 			etat = etat.actionEntree();
 
 			// if (carte[etat.getCurseurY()][etat.getCurseurX()] instanceof Unite) {

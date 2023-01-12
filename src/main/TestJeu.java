@@ -1,5 +1,9 @@
 package main;
 
+import java.util.List;
+
+import cases.Case;
+
 /** Implémente des fonctions utiles pour tester le jeu. */
 public class TestJeu {
 
@@ -10,7 +14,7 @@ public class TestJeu {
      * @param y           La position sur l'axe y du curseur
      * @param carteString la carte du jeu
      */
-    public static void afficheElementDansCase(int x, int y, String[][] carteString) {
+    public static void afficheElementDansCase(int x, int y, Case[][] carteString) {
         System.out.println("(x: " + x + ", y: " + y + ") -> " + carteString[y][x]);
     }
 
@@ -25,5 +29,11 @@ public class TestJeu {
                 System.out.print(carte[i][j] + " | ");
             }
         }
+    }
+
+    public static void afficheArgentDesJoueurs(List<Joueur> joueurs) {
+        for (Joueur j : joueurs)
+            System.out.println("Argent J" + j.getId() + " = " + j.getArgent());
+        System.out.println("");
     }
 }
