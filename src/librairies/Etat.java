@@ -1,11 +1,9 @@
 package librairies;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import cases.Case;
-
-import java.util.LinkedList;
-
 import ressources.Chemins;
 import ressources.Config;
 import unites.Unite;
@@ -35,6 +33,13 @@ public abstract class Etat {
         return listeDeplacements.size();
     }
 
+    /**
+     * Ajoute un nouveau déplacement à la liste des déplacements que l'unité fait
+     * 
+     * @param destination la destination de l'unité
+     * @param debut       la position initiale de l'unité
+     * @param fin         la position finale de l'unité
+     */
     public void ajouteDeplacement(Case destination, String debut, String fin) {
         if (dernierDeplacement() == null) {
             listeDeplacements
@@ -51,15 +56,29 @@ public abstract class Etat {
     }
 
     // à revoir
+
     public void retireDeplacement(Deplacement deplacement) {
         listeDeplacements.remove(deplacement);
     }
 
+    /**
+     * Récupère le dernier déplacement de l'unité
+     * 
+     * @return le dernier déplacement
+     * 
+     */
     public Deplacement dernierDeplacement() {
         if (listeDeplacements.size() != 0)
             return listeDeplacements.get(listeDeplacements.size() - 1);
         return null;
     }
+
+    /**
+     * Déplace le curseur vers le haut sans sortir de la grille
+     * 
+     * @return la même instance de la classe Etat
+     * 
+     */
 
     public Etat actionHaut(Case[][] carte) {
         if (getCurseurY() < Config.longueurCarteYCases - 1) {
@@ -69,6 +88,12 @@ public abstract class Etat {
         return this;
     }
 
+    /**
+     * Déplace le curseur vers le bas sans sortir de la grille
+     * 
+     * @return la même instance de la classe Etat
+     * 
+     */
     public Etat actionBas(Case[][] carte) {
         if (getCurseurY() > 0) {
             deplaceCurseur(0, -1);
@@ -77,6 +102,12 @@ public abstract class Etat {
         return this;
     }
 
+    /**
+     * Déplace le curseur vers la gauche sans sortir de la grille
+     * 
+     * @return la même instance de la classe Etat
+     * 
+     */
     public Etat actionGauche(Case[][] carte) {
         if (getCurseurX() > 0) {
             deplaceCurseur(-1, 0);
@@ -84,6 +115,13 @@ public abstract class Etat {
         }
         return this;
     }
+
+    /**
+     * Déplace le curseur vers la droite sans sortir de la grille
+     * 
+     * @return la même instance de la classe Etat
+     * 
+     */
 
     public Etat actionDroite(Case[][] carte) {
         if (getCurseurX() < Config.longueurCarteXCases - 1) {
@@ -95,6 +133,13 @@ public abstract class Etat {
 
     public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
+    /**
+     * Déplace le curseur en fonction des coordonnées placées en paramètre
+     * 
+     * @param x la nouvelle position du curseur sur l'axe x
+     * @param y la nouvelle position du curseur sur l'axe y
+     * 
+     */
     public void deplaceCurseur(int x, int y) {
         curseurX += x;
         curseurY += y;
