@@ -1,16 +1,12 @@
 package librairies;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import cases.Case;
 import main.Jeu;
 import ressources.Affichage;
 import ressources.Chemins;
 
 public class Deplacement {
-    private Case destination;
+    // private Case destination;
     private String image;
     private String debut;
     private String fin;
@@ -18,7 +14,7 @@ public class Deplacement {
     private int y;
 
     public Deplacement(Case destination, String debut, String fin, int x, int y) {
-        this.destination = destination;
+        // this.destination = destination;
         this.image = Chemins.getCheminFleche(debut, fin);
         this.debut = debut;
         this.fin = fin;
@@ -40,6 +36,10 @@ public class Deplacement {
             return 2;
         }
         return -1;
+    }
+
+    public int[] getPosition() {
+        return new int[] { x, y };
     }
 
     public String getDebut() {

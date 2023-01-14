@@ -121,7 +121,7 @@ public class Jeu {
 				if (caseDispatchee[1][0] != null) {
 					Joueur joueurProprietaire = joueurs.get(Integer.parseInt(caseDispatchee[1][1]));
 					unite = Unite.genererUniteParType(caseDispatchee[1][0], joueurProprietaire, j, i);
-					unite.changeDispo();
+					unite.setDispo(true);
 				}
 				// Générer la case
 				carte[i][j] = new Case(terrain, unite, j, i);
@@ -169,7 +169,11 @@ public class Jeu {
 		StdDraw.show(); // Montre a l'ecran les changement demandes
 	}
 
-	// public static comparePositions()
+	public static boolean memesPositions(int[] coords1, int[] coords2) {
+		if ((coords1[0] == coords2[0]) && (coords1[1] == coords2[1]))
+			return true;
+		return false;
+	}
 
 	public void initialDisplay() {
 		StdDraw.enableDoubleBuffering(); // rend l'affichage plus fluide: tout draw est mis en buffer et ne s'affiche

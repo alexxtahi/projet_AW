@@ -17,7 +17,7 @@ public abstract class Etat {
     private int curseurX;
     private int curseurY;
 
-    private List<Deplacement> listeDeplacements;
+    protected List<Deplacement> listeDeplacements;
 
     public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
         this.uniteAdeplacer = uniteAdeplacer;
@@ -106,6 +106,10 @@ public abstract class Etat {
 
     public int getCurseurY() {
         return curseurY;
+    }
+
+    public int[] getPosition() {
+        return new int[] { curseurX, curseurY };
     }
 
 }

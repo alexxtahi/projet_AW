@@ -1,6 +1,7 @@
 package librairies;
 
 import cases.Case;
+import main.Jeu;
 import ressources.Chemins;
 import unites.Unite;
 
@@ -16,7 +17,7 @@ public class ChoisitTrajet extends Etat {
         int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
                 destination.getTerrain().getType());
         System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
-        return (super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0);
+        return ((super.uniteAdeplacer.estDispo()) && (super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0));
     }
 
     @Override
@@ -53,7 +54,10 @@ public class ChoisitTrajet extends Etat {
 
     @Override
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
-        // if ()
+        if (Jeu.memesPositions(getPosition(), dernierDeplacement().getPosition())) {
+            uniteAdeplacer.move(getCurseurX(), getCurseurY());
+        }
+        uniteAdeplacer.resetDep();
         return new NavigationLibre(getCurseurX(), getCurseurY());
     }
 
