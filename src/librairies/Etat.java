@@ -35,7 +35,7 @@ public abstract class Etat {
 
     /**
      * Ajoute un nouveau déplacement à la liste des déplacements que l'unité fait
-     * 
+     *
      * @param destination la destination de l'unité
      * @param debut       la position initiale de l'unité
      * @param fin         la position finale de l'unité
@@ -65,7 +65,6 @@ public abstract class Etat {
      * Récupère le dernier déplacement de l'unité
      * 
      * @return le dernier déplacement
-     * 
      */
     public Deplacement dernierDeplacement() {
         if (listeDeplacements.size() != 0)
@@ -75,11 +74,9 @@ public abstract class Etat {
 
     /**
      * Déplace le curseur vers le haut sans sortir de la grille
-     * 
+     *
      * @return la même instance de la classe Etat
-     * 
      */
-
     public Etat actionHaut(Case[][] carte) {
         if (getCurseurY() < Config.longueurCarteYCases - 1) {
             deplaceCurseur(0, 1);

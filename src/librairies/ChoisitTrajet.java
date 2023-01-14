@@ -6,9 +6,11 @@ import ressources.Chemins;
 import unites.Unite;
 
 public class ChoisitTrajet extends Etat {
+    private Case caseDeDepart;
 
-    public ChoisitTrajet(Unite uniteAdeplacer, int curseurX, int curseurY) {
+    public ChoisitTrajet(Case caseDeDepart, Unite uniteAdeplacer, int curseurX, int curseurY) {
         super(uniteAdeplacer, curseurX, curseurY);
+        this.caseDeDepart = caseDeDepart;
         System.out.println("Déplacement de l'unité " + uniteAdeplacer.getClass().getName() + " - Pts de déplacement: "
                 + uniteAdeplacer.getPointsDep());
     }
@@ -17,7 +19,8 @@ public class ChoisitTrajet extends Etat {
         int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
                 destination.getTerrain().getType());
         System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
-        return ((super.uniteAdeplacer.estDispo()) && (super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0));
+        return (super.uniteAdeplacer.estDispo() && coutDuDep != -1
+                && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0);
     }
 
     @Override
@@ -56,6 +59,8 @@ public class ChoisitTrajet extends Etat {
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
         if (Jeu.memesPositions(getPosition(), dernierDeplacement().getPosition())) {
             uniteAdeplacer.move(getCurseurX(), getCurseurY());
+            caseDeDepart.setUnite(null);
+            carte[getCurseurY()][getCurseurX()].setUnite(uniteAdeplacer);
         }
         uniteAdeplacer.resetDep();
         return new NavigationLibre(getCurseurX(), getCurseurY());

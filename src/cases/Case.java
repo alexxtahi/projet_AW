@@ -5,21 +5,30 @@ import unites.Unite;
 public class Case {
     private Terrain terrain;
     private Unite unite;
-    private int[] position = { 0, 0 };
+    private int x;
+    private int y;
 
     public Case(Terrain terrain, Unite unite, int x, int y) {
         this.terrain = terrain;
         this.unite = unite;
-        position[0] = x;
-        position[1] = y;
+        this.x = x;
+        this.y = y;
     }
 
     public Unite getUnite() {
         return unite;
     }
 
+    public void setUnite(Unite unite) {
+        this.unite = unite;
+    }
+
     public Terrain getTerrain() {
         return terrain;
+    }
+
+    public int[] getPosition() {
+        return new int[] { x, y };
     }
 
     public void affiche() {
