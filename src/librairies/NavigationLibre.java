@@ -1,5 +1,6 @@
 package librairies;
 
+import cases.Case;
 import ressources.Config;
 
 public class NavigationLibre extends Etat {
@@ -34,8 +35,13 @@ public class NavigationLibre extends Etat {
     }
 
     @Override
-    public Etat actionEntree() {
-        return new ChoisitTrajet(getCurseurX(), getCurseurY());
+    public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
+        Case caseActuelle = carte[getCurseurY()][getCurseurX()];
+        if (caseActuelle.getUnite() != null && caseActuelle.getUnite().getJoueur().getId() == indexJoueurActif) {
+            return new ChoisitTrajet(caseActuelle.getUnite(), getCurseurX(), getCurseurY());
+        }
+        System.out.println("Pas d'unité appartenant au joueur sur cette case");
+        return this;
     }
 
 }

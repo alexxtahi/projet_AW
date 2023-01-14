@@ -2,19 +2,24 @@ package librairies;
 
 import java.util.List;
 
+import cases.Case;
+
 import java.util.LinkedList;
 
 import ressources.Chemins;
 import ressources.Config;
+import unites.Unite;
 
 public abstract class Etat {
 
+    private Unite uniteAdeplacer;
     private int curseurX;
     private int curseurY;
 
     private List<Deplacement> listeDeplacements;
 
-    public Etat(int curseurX, int curseurY) {
+    public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
+        this.uniteAdeplacer = uniteAdeplacer;
         this.curseurX = curseurX;
         this.curseurY = curseurY;
         listeDeplacements = new LinkedList<Deplacement>();
@@ -24,6 +29,10 @@ public abstract class Etat {
         return new LinkedList<Deplacement>(listeDeplacements);
     }
 
+    public int getNombreDep() {
+        return listeDeplacements.size();
+    }
+
     public void ajouteDeplacement(String debut, String fin) {
         if (dernierDeplacement() == null) {
             listeDeplacements.add(new Deplacement(Chemins.DIRECTION_DEBUT, fin, getCurseurX(), getCurseurY()));
@@ -31,6 +40,7 @@ public abstract class Etat {
             dernierDeplacement().setFin(fin);
             listeDeplacements.add(new Deplacement(debut, Chemins.DIRECTION_FIN, getCurseurX(), getCurseurY()));
         }
+        uniteAdeplacer.diminuePointsDep(1);
     }
 
     // à revoir
@@ -68,7 +78,7 @@ public abstract class Etat {
         return this;
     }
 
-    public abstract Etat actionEntree();
+    public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
     public void deplaceCurseur(int x, int y) {
         curseurX += x;

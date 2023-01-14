@@ -8,41 +8,43 @@ public class Unite {
 
     private Joueur joueur;
     private String image;
+    private String moyenDeDep;
     private double pointsVie;
+    private int pointsDepMax;
     private int pointsDep;
     private int prix;
     private int[] position = { 0, 0 };
     private boolean disponible;
 
-    public Unite(Joueur joueur, String image, int pointsDep, int prix, int x, int y) {
+    public Unite(Joueur joueur, String image, String moyenDeDep, int pointsDep, int prix, int x, int y) {
         this.joueur = joueur;
         this.image = image;
-        pointsVie = 10;
-        this.pointsDep = pointsDep;
+        this.moyenDeDep = moyenDeDep;
+        this.pointsVie = 10;
+        this.pointsDepMax = this.pointsDep = pointsDep;
         this.prix = prix;
-        position[0] = x;
-        position[1] = y;
+        this.position = new int[] { x, y };
         this.disponible = false;
     }
 
     public static Unite genererUniteParType(String type, Joueur joueur, int x, int y) {
         switch (type) {
             case "Artillerie":
-                return new Artillerie(joueur, x, y);
+                return new Artillerie(joueur, "Pieds", x, y);
             case "Bazooka":
-                return new Bazooka(joueur, x, y);
+                return new Bazooka(joueur, "Pieds", x, y);
             case "Bombardier":
-                return new Bombardier(joueur, x, y);
+                return new Bombardier(joueur, "Aerien", x, y);
             case "Convoit":
-                return new Convoit(joueur, x, y);
+                return new Convoit(joueur, "Chenilles", x, y);
             case "DCA":
-                return new DCA(joueur, x, y);
+                return new DCA(joueur, "Chenilles", x, y);
             case "Helico":
-                return new Helico(joueur, x, y);
+                return new Helico(joueur, "Aerien", x, y);
             case "Infanterie":
-                return new Infanterie(joueur, x, y);
+                return new Infanterie(joueur, "Pieds", x, y);
             case "Tank":
-                return new Tank(joueur, x, y);
+                return new Tank(joueur, "Chenilles", x, y);
             default:
                 return null;
         }
@@ -60,8 +62,12 @@ public class Unite {
         pointsVie += pv;
     }
 
-    public int getDeplacement() {
+    public int getPointsDep() {
         return pointsDep;
+    }
+
+    public void diminuePointsDep(int coutDuDep) {
+        pointsDep -= coutDuDep;
     }
 
     public Joueur getJoueur() {

@@ -26,10 +26,12 @@ public class Jeu {
 	// proprietes
 	private Case[][] carte;
 	private List<Joueur> joueurs;
-	private List<String> dicoTypesTerrain;
 	private int round;
 	private Etat etat;
 	private Joueur joueurActif;
+
+	public static List<String> dicoTypesTerrain = new ArrayList<String>(
+			Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
 
 	public Jeu(String fileName) throws Exception {
 
@@ -42,7 +44,6 @@ public class Jeu {
 		joueurActif = joueurs.get(indexJoueurActif);
 
 		// Création de la carte
-		dicoTypesTerrain = new ArrayList<String>(Arrays.asList("Plaine", "Foret", "Montagne", "Eau"));
 		String[][] carteString = ParseurCartes.parseCarte(
 				fileName);
 		carte = new Case[carteString.length][];
@@ -72,7 +73,7 @@ public class Jeu {
 		msg += " - Joueur actuel : " + ((indexJoueurActif == 1) ? "Rouge" : "Bleu");
 		msg += " - Argent : " + joueurActif.getArgent();
 		// Affichage
-		Affichage.videZoneTexte();
+		// Affichage.videZoneTexte(); // Je ne comprends pas l'intérêt de cette fonction
 		Affichage.afficheTexteDescriptif(msg);
 	}
 
@@ -210,19 +211,15 @@ public class Jeu {
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
 		if (toucheSuivante.isCaractere('t')) { // Finir le tour du joueur actif
 			String[] options = { "Oui", "Non" };
-			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 1) == 0) {
+			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 0) == 0) {
 				// le choix 0, "Oui", a été selectionné
 				changeTour();
 			}
-
 		}
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
-			etat = etat.actionEntree();
-
-			// if (carte[etat.getCurseurY()][etat.getCurseurX()] instanceof Unite) {
-			// }
+			etat = etat.actionEntree(carte, indexJoueurActif);
 		}
 		// Actualisation de l'affichage
 		display();
