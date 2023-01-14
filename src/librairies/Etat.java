@@ -61,31 +61,39 @@ public abstract class Etat {
         return null;
     }
 
-    public Etat actionHaut(Case destination) {
-        if (getCurseurY() < Config.longueurCarteYCases - 1)
+    public Etat actionHaut(Case[][] carte) {
+        if (getCurseurY() < Config.longueurCarteYCases - 1) {
             deplaceCurseur(0, 1);
+            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+        }
         return this;
     }
 
-    public Etat actionBas(Case destination) {
-        if (getCurseurY() > 0)
+    public Etat actionBas(Case[][] carte) {
+        if (getCurseurY() > 0) {
             deplaceCurseur(0, -1);
+            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+        }
         return this;
     }
 
-    public Etat actionGauche(Case destination) {
-        if (getCurseurX() > 0)
+    public Etat actionGauche(Case[][] carte) {
+        if (getCurseurX() > 0) {
             deplaceCurseur(-1, 0);
+            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+        }
         return this;
     }
 
-    public Etat actionDroite(Case destination) {
-        if (getCurseurX() < Config.longueurCarteXCases - 1)
+    public Etat actionDroite(Case[][] carte) {
+        if (getCurseurX() < Config.longueurCarteXCases - 1) {
             deplaceCurseur(1, 0);
+            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+        }
         return this;
     }
 
-    public abstract Etat actionEntree(Case caseActuelle, int indexJoueurActif);
+    public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
     public void deplaceCurseur(int x, int y) {
         curseurX += x;

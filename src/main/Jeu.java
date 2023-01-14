@@ -169,6 +169,8 @@ public class Jeu {
 		StdDraw.show(); // Montre a l'ecran les changement demandes
 	}
 
+	// public static comparePositions()
+
 	public void initialDisplay() {
 		StdDraw.enableDoubleBuffering(); // rend l'affichage plus fluide: tout draw est mis en buffer et ne s'affiche
 											// qu'au prochain StdDraw.show();
@@ -199,13 +201,13 @@ public class Jeu {
 																						// la prochaine entree de
 																						// l'utilisateur
 		if (toucheSuivante.isHaut())
-			etat = etat.actionHaut();
+			etat = etat.actionHaut(carte);
 		if (toucheSuivante.isBas())
-			etat = etat.actionBas();
+			etat = etat.actionBas(carte);
 		if (toucheSuivante.isGauche())
-			etat = etat.actionGauche();
+			etat = etat.actionGauche(carte);
 		if (toucheSuivante.isDroite())
-			etat = etat.actionDroite();
+			etat = etat.actionDroite(carte);
 
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
@@ -219,8 +221,7 @@ public class Jeu {
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
-			Case caseActuelle = carte[etat.getCurseurY()][etat.getCurseurX()];
-			etat = etat.actionEntree(caseActuelle, indexJoueurActif);
+			etat = etat.actionEntree(carte, indexJoueurActif);
 		}
 		// Actualisation de l'affichage
 		display();

@@ -11,31 +11,32 @@ public class NavigationLibre extends Etat {
     }
 
     @Override
-    public Etat actionHaut(Case destination) {
-        super.actionHaut(destination);
+    public Etat actionHaut(Case[][] carte) {
+        super.actionHaut(carte);
         return this;
     }
 
     @Override
-    public Etat actionBas(Case destination) {
-        super.actionBas(destination);
+    public Etat actionBas(Case[][] carte) {
+        super.actionBas(carte);
         return this;
     }
 
     @Override
-    public Etat actionGauche(Case destination) {
-        super.actionGauche(destination);
+    public Etat actionGauche(Case[][] carte) {
+        super.actionGauche(carte);
         return this;
     }
 
     @Override
-    public Etat actionDroite(Case destination) {
-        super.actionDroite(destination);
+    public Etat actionDroite(Case[][] carte) {
+        super.actionDroite(carte);
         return this;
     }
 
     @Override
-    public Etat actionEntree(Case caseActuelle, int indexJoueurActif) {
+    public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
+        Case caseActuelle = carte[getCurseurY()][getCurseurX()];
         if (caseActuelle.getUnite() != null && caseActuelle.getUnite().getJoueur().getId() == indexJoueurActif) {
             return new ChoisitTrajet(caseActuelle.getUnite(), getCurseurX(), getCurseurY());
         }
