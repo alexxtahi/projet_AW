@@ -70,6 +70,10 @@ public class Unite {
         pointsDep -= coutDuDep;
     }
 
+    public String getMoyenDeDep() {
+        return moyenDeDep;
+    }
+
     public Joueur getJoueur() {
         return joueur;
     }

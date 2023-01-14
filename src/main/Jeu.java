@@ -219,7 +219,8 @@ public class Jeu {
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
-			etat = etat.actionEntree(carte, indexJoueurActif);
+			Case caseActuelle = carte[etat.getCurseurY()][etat.getCurseurX()];
+			etat = etat.actionEntree(caseActuelle, indexJoueurActif);
 		}
 		// Actualisation de l'affichage
 		display();

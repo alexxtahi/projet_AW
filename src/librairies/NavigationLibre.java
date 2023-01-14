@@ -6,37 +6,36 @@ import ressources.Config;
 public class NavigationLibre extends Etat {
 
     public NavigationLibre(int curseurX, int curseurY) {
-        super(curseurX, curseurY);
+        super(null, curseurX, curseurY);
         System.out.println("Navigation libre");
     }
 
     @Override
-    public Etat actionHaut() {
-        super.actionHaut();
+    public Etat actionHaut(Case destination) {
+        super.actionHaut(destination);
         return this;
     }
 
     @Override
-    public Etat actionBas() {
-        super.actionBas();
+    public Etat actionBas(Case destination) {
+        super.actionBas(destination);
         return this;
     }
 
     @Override
-    public Etat actionGauche() {
-        super.actionGauche();
+    public Etat actionGauche(Case destination) {
+        super.actionGauche(destination);
         return this;
     }
 
     @Override
-    public Etat actionDroite() {
-        super.actionDroite();
+    public Etat actionDroite(Case destination) {
+        super.actionDroite(destination);
         return this;
     }
 
     @Override
-    public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
-        Case caseActuelle = carte[getCurseurY()][getCurseurX()];
+    public Etat actionEntree(Case caseActuelle, int indexJoueurActif) {
         if (caseActuelle.getUnite() != null && caseActuelle.getUnite().getJoueur().getId() == indexJoueurActif) {
             return new ChoisitTrajet(caseActuelle.getUnite(), getCurseurX(), getCurseurY());
         }

@@ -11,44 +11,46 @@ public class ChoisitTrajet extends Etat {
         System.out.println("Déplacement d'une unité");
     }
 
-    private boolean canMove() {
-        return (unite.getPointsDep() - getNombreDep()) > 0;
+    private boolean canUniteMove(Case destination) {
+        int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
+                destination.getTerrain().getType());
+        return (super.uniteAdeplacer.getPointsDep() - coutDuDep > 0);
     }
 
     @Override
-    public Etat actionHaut() {
-        super.actionHaut();
-        if (canMove())
-            ajouteDeplacement(Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT);
+    public Etat actionHaut(Case destination) {
+        super.actionHaut(destination);
+        if (canUniteMove(destination))
+            ajouteDeplacement(destination, Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT);
         return this;
     }
 
     @Override
-    public Etat actionBas() {
-        super.actionBas();
-        if (canMove())
-            ajouteDeplacement(Chemins.DIRECTION_HAUT, Chemins.DIRECTION_BAS);
+    public Etat actionBas(Case destination) {
+        super.actionBas(destination);
+        if (canUniteMove(destination))
+            ajouteDeplacement(destination, Chemins.DIRECTION_HAUT, Chemins.DIRECTION_BAS);
         return this;
     }
 
     @Override
-    public Etat actionGauche() {
-        super.actionGauche();
-        if (canMove())
-            ajouteDeplacement(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_GAUCHE);
+    public Etat actionGauche(Case destination) {
+        super.actionGauche(destination);
+        if (canUniteMove(destination))
+            ajouteDeplacement(destination, Chemins.DIRECTION_DROITE, Chemins.DIRECTION_GAUCHE);
         return this;
     }
 
     @Override
-    public Etat actionDroite() {
-        super.actionDroite();
-        if (canMove())
-            ajouteDeplacement(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_DROITE);
+    public Etat actionDroite(Case destination) {
+        super.actionDroite(destination);
+        if (canUniteMove(destination))
+            ajouteDeplacement(destination, Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_DROITE);
         return this;
     }
 
     @Override
-    public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
+    public Etat actionEntree(Case caseActuelle, int indexJoueurActif) {
         // if ()
         return new NavigationLibre(getCurseurX(), getCurseurY());
     }

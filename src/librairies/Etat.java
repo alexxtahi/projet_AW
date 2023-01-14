@@ -12,7 +12,8 @@ import unites.Unite;
 
 public abstract class Etat {
 
-    private Unite uniteAdeplacer;
+    protected Unite uniteAdeplacer;
+    protected Case destinationDuCurseur;
     private int curseurX;
     private int curseurY;
 
@@ -20,6 +21,7 @@ public abstract class Etat {
 
     public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
         this.uniteAdeplacer = uniteAdeplacer;
+        this.destinationDuCurseur = null;
         this.curseurX = curseurX;
         this.curseurY = curseurY;
         listeDeplacements = new LinkedList<Deplacement>();
@@ -33,14 +35,19 @@ public abstract class Etat {
         return listeDeplacements.size();
     }
 
-    public void ajouteDeplacement(String debut, String fin) {
+    public void ajouteDeplacement(Case destination, String debut, String fin) {
         if (dernierDeplacement() == null) {
-            listeDeplacements.add(new Deplacement(Chemins.DIRECTION_DEBUT, fin, getCurseurX(), getCurseurY()));
+            listeDeplacements
+                    .add(new Deplacement(destination, Chemins.DIRECTION_DEBUT, fin, getCurseurX(), getCurseurY()));
         } else {
             dernierDeplacement().setFin(fin);
-            listeDeplacements.add(new Deplacement(debut, Chemins.DIRECTION_FIN, getCurseurX(), getCurseurY()));
+            listeDeplacements
+                    .add(new Deplacement(destination, debut, Chemins.DIRECTION_FIN, getCurseurX(), getCurseurY()));
         }
-        uniteAdeplacer.diminuePointsDep(1);
+        int coutDuDep = Deplacement.getCoutDuDep(uniteAdeplacer.getMoyenDeDep(), destination.getTerrain().getType());
+        System.out.println(uniteAdeplacer.getMoyenDeDep() + "/" + destination.getTerrain().getType()
+                + " -> cout du déplacement: " + coutDuDep);
+        uniteAdeplacer.diminuePointsDep(coutDuDep);
     }
 
     // à revoir
@@ -54,31 +61,31 @@ public abstract class Etat {
         return null;
     }
 
-    public Etat actionHaut() {
+    public Etat actionHaut(Case destination) {
         if (getCurseurY() < Config.longueurCarteYCases - 1)
             deplaceCurseur(0, 1);
         return this;
     }
 
-    public Etat actionBas() {
+    public Etat actionBas(Case destination) {
         if (getCurseurY() > 0)
             deplaceCurseur(0, -1);
         return this;
     }
 
-    public Etat actionGauche() {
+    public Etat actionGauche(Case destination) {
         if (getCurseurX() > 0)
             deplaceCurseur(-1, 0);
         return this;
     }
 
-    public Etat actionDroite() {
+    public Etat actionDroite(Case destination) {
         if (getCurseurX() < Config.longueurCarteXCases - 1)
             deplaceCurseur(1, 0);
         return this;
     }
 
-    public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
+    public abstract Etat actionEntree(Case caseActuelle, int indexJoueurActif);
 
     public void deplaceCurseur(int x, int y) {
         curseurX += x;
