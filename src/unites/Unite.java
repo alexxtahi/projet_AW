@@ -88,6 +88,10 @@ public class Unite {
 		pointsDep = pointsDepMax;
 	}
 
+	public void restorePointsDep(int coutDuDep) {
+		pointsDep += coutDuDep;
+	}
+
 	/**
 	 * Diminue les points de deplacement de l'unité en fonction du cout du
 	 * déplacement
