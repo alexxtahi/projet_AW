@@ -6,18 +6,30 @@ import ressources.Affichage;
 import ressources.Chemins;
 
 public class Deplacement {
+
 	// private Case destination;
 	private String image;
 	private String debut;
 	private String fin;
 	private int x;
 	private int y;
+	private int cout;
 
 	public Deplacement(Case destination, String debut, String fin, int x, int y) {
 		// this.destination = destination;
 		this.image = Chemins.getCheminFleche(debut, fin);
 		this.debut = debut;
 		this.fin = fin;
+		this.x = x;
+		this.y = y;
+	}
+
+	public Deplacement(Case destination, String debut, String fin, int cout, int x, int y) {
+		// this.destination = destination;
+		this.image = Chemins.getCheminFleche(debut, fin);
+		this.debut = debut;
+		this.fin = fin;
+		this.cout = cout;
 		this.x = x;
 		this.y = y;
 	}
@@ -53,6 +65,10 @@ public class Deplacement {
 
 	public String getDebut() {
 		return debut;
+	}
+
+	public int getCout() {
+		return cout;
 	}
 
 	public String getFin() {

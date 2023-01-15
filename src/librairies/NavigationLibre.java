@@ -36,10 +36,11 @@ public class NavigationLibre extends Etat {
 
     @Override
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
-        Unite unitePresente = carte[getCurseurY()][getCurseurX()].getUnite();
+        Case caseDeDepart = carte[getCurseurY()][getCurseurX()];
+        Unite unitePresente = caseDeDepart.getUnite();
         if (unitePresente != null && unitePresente.estDispo()
                 && unitePresente.getJoueur().getId() == indexJoueurActif) {
-            return new ChoisitTrajet(unitePresente, getCurseurX(), getCurseurY());
+            return new ChoisitTrajet(caseDeDepart, unitePresente, getCurseurX(), getCurseurY());
         }
         System.out.println("Pas d'unité appartenant au joueur sur cette case");
         return this;
