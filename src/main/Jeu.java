@@ -15,7 +15,6 @@ import librairies.Etat;
 import librairies.NavigationLibre;
 import librairies.StdDraw;
 import ressources.Affichage;
-import ressources.Chemins;
 import ressources.Config;
 import ressources.ParseurCartes;
 import unites.Unite;
@@ -44,8 +43,7 @@ public class Jeu {
 		joueurActif = joueurs.get(indexJoueurActif);
 
 		// Création de la carte
-		String[][] carteString = ParseurCartes.parseCarte(
-				fileName);
+		String[][] carteString = ParseurCartes.parseCarte(fileName);
 		carte = new Case[carteString.length][];
 		Config.setDimension(carteString[0].length, carteString.length);
 		genererCases(carteString);
@@ -210,6 +208,11 @@ public class Jeu {
 			etat = etat.actionGauche(carte);
 		if (toucheSuivante.isDroite())
 			etat = etat.actionDroite(carte);
+
+		if (toucheSuivante.isCaractere('g')) {
+			etat = etat.actionG(carte, indexJoueurActif);
+
+		}
 
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES

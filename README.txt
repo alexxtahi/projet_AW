@@ -28,5 +28,8 @@ Une méthode affichage() à été créée dans cette classe pour faciler l'affic
 Chaque unité a eue droit à une classe dans le dossier /src/unites qui héritent toutes de la super classe Unite, contenant toutes les propriétés et méthodes communes aux unités du jeu.
 Elle dispose elle aussi d'une méthode affiche() jouant le même rôle que la méthode du même nom dans la classe Terrain.
 
+3. Déplacements des unités
+pour deplacer une unité il faut au préalable avoir la destination et le cout du deplacement pour savoir si l'unité est en mesure de se deplacer nous avons utiliser la méthode getCoutDuDep() pour calculer le coût du déplacement 
+si l'unité peut 
 
 
