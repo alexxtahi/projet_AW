@@ -82,15 +82,17 @@ public abstract class Etat {
             uniteAdeplacer.resetDep();
         } else {
             int depDepenses = 0;
+            LinkedList<Deplacement> trajetAeffacer = new LinkedList<Deplacement>();
             for (Deplacement dep : listeDeplacements) {
                 if (!pasEnArriere && Jeu.memesPositions(destinationDuCurseur.getPosition(), dep.getPosition())) {
                     pasEnArriere = true;
                     dep.setFin(Chemins.DIRECTION_FIN);
-                } else if (pasEnArriere) {
+                } else if (pasEnArriere && dep != null) {
                     depDepenses += dep.getCout();
-                    listeDeplacements.remove(dep);
+                    trajetAeffacer.add(dep);
                 }
             }
+            listeDeplacements.removeAll(trajetAeffacer);
             uniteAdeplacer.restorePointsDep(depDepenses);
         }
         return pasEnArriere;
@@ -171,6 +173,8 @@ public abstract class Etat {
 
     public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
+    public abstract Etat actionEchap();
+
     /**
      * Déplace le curseur en fonction des coordonnées placées en paramètre
      * 
@@ -193,6 +197,11 @@ public abstract class Etat {
 
     public int[] getPosition() {
         return new int[] { curseurX, curseurY };
+    }
+
+    public void setPosition(int[] position) {
+        curseurX = position[0];
+        curseurY = position[1];
     }
 
 }

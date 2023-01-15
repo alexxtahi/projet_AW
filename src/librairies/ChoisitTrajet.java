@@ -2,6 +2,7 @@ package librairies;
 
 import cases.Case;
 import main.Jeu;
+import ressources.Affichage;
 import ressources.Chemins;
 import unites.Unite;
 
@@ -16,13 +17,18 @@ public class ChoisitTrajet extends Etat {
     }
 
     private boolean canUniteMove() {
-        int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
-                super.destinationDuCurseur.getTerrain().getType());
+        String moyenDeDep = super.uniteAdeplacer.getMoyenDeDep();
+        String terrainDeDestination = super.destinationDuCurseur.getTerrain().getType();
+        boolean uniteEnnemiPresente = false;
+        if (super.destinationDuCurseur.getUnite() != null
+                && super.destinationDuCurseur.getUnite().getJoueur().getId() != uniteAdeplacer.getJoueur().getId()) {
+            uniteEnnemiPresente = true;
+        }
 
-        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
+        int coutDuDep = Deplacement.getCoutDuDep(moyenDeDep, terrainDeDestination);
 
         return (super.depEnArriere() || (super.uniteAdeplacer.estDispo() && coutDuDep != -1
-                && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0));
+                && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0 && !uniteEnnemiPresente));
     }
 
     @Override
@@ -34,6 +40,8 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
+
         return this;
     }
 
@@ -46,6 +54,7 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_HAUT, Chemins.DIRECTION_BAS);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
@@ -58,6 +67,7 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_GAUCHE);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
@@ -70,17 +80,32 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_DROITE);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
     @Override
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
         Case caseDarrivee = carte[getCurseurY()][getCurseurX()];
-        if (Jeu.memesPositions(getPosition(), dernierDeplacement().getPosition()) && caseDarrivee.getUnite() == null) {
-            uniteAdeplacer.move(getCurseurX(), getCurseurY());
-            caseDeDepart.setUnite(null);
-            caseDarrivee.setUnite(uniteAdeplacer);
+        Deplacement dernierDep = dernierDeplacement();
+        if (dernierDep != null && Jeu.memesPositions(getPosition(), dernierDep.getPosition())
+                && caseDarrivee.getUnite() == null) {
+            // Choix de l'action à effectuer par l'unité
+            String[] actions = { "Attendre" };
+            if (Affichage.popup("Choisissez l'action à effectuer :", actions, true, 0) == 0) {
+                uniteAdeplacer.move(getCurseurX(), getCurseurY());
+                caseDeDepart.setUnite(null);
+                caseDarrivee.setUnite(uniteAdeplacer);
+            } else {
+                setPosition(uniteAdeplacer.getPosition());
+            }
         }
+        uniteAdeplacer.resetDep();
+        return new NavigationLibre(getCurseurX(), getCurseurY());
+    }
+
+    @Override
+    public Etat actionEchap() {
         uniteAdeplacer.resetDep();
         return new NavigationLibre(getCurseurX(), getCurseurY());
     }
