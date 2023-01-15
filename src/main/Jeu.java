@@ -15,7 +15,6 @@ import librairies.Etat;
 import librairies.NavigationLibre;
 import librairies.StdDraw;
 import ressources.Affichage;
-import ressources.Chemins;
 import ressources.Config;
 import ressources.ParseurCartes;
 import unites.Unite;

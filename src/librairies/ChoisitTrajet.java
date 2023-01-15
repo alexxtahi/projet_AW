@@ -1,5 +1,7 @@
 package librairies;
 
+import java.util.List;
+
 import cases.Case;
 import main.Jeu;
 import ressources.Affichage;
@@ -88,16 +90,39 @@ public class ChoisitTrajet extends Etat {
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
         Case caseDarrivee = carte[getCurseurY()][getCurseurX()];
         Deplacement dernierDep = dernierDeplacement();
-        if (dernierDep != null && Jeu.memesPositions(getPosition(), dernierDep.getPosition())
+        if (dernierDep != null && Jeu.memesPositions(getPositionCurseur(), dernierDep.getPosition())
                 && caseDarrivee.getUnite() == null) {
             // Choix de l'action à effectuer par l'unité
+            List<Unite> unitesEnnemiesAdjacentes = uniteAdeplacer.detectEnnemisProches(carte,
+                    super.destinationDuCurseur);
+
             String[] actions = { "Attendre" };
-            if (Affichage.popup("Choisissez l'action à effectuer :", actions, true, 0) == 0) {
+            if (unitesEnnemiesAdjacentes.size() != 0) {
+                actions = new String[] { "Attendre", "Attaquer" };
+            }
+
+            int choixAction = Affichage.popup("Choisissez l'action à effectuer :", actions, true, 0);
+            if (choixAction == 0) { // Attendre
                 uniteAdeplacer.move(getCurseurX(), getCurseurY());
                 caseDeDepart.setUnite(null);
                 caseDarrivee.setUnite(uniteAdeplacer);
+            } else if (choixAction == 1) { // Attaquer
+                uniteAdeplacer.move(getCurseurX(), getCurseurY());
+                caseDeDepart.setUnite(null);
+                caseDarrivee.setUnite(uniteAdeplacer);
+                // Attaque
+                Unite uniteAattaquer = unitesEnnemiesAdjacentes.get(0);
+                uniteAdeplacer.attaque(uniteAattaquer);
+                // Riposte
+                if (uniteAattaquer.getPointsVie() > 0.0f) {
+                    uniteAattaquer.attaque(uniteAdeplacer);
+                    System.out.println("Riposte");
+                } else { // Destruction de l'unité
+                    carte[uniteAattaquer.getY()][uniteAattaquer.getX()].setUnite(null);
+                    uniteAattaquer = null;
+                }
             } else {
-                setPosition(uniteAdeplacer.getPosition());
+                setPositionCurseur(uniteAdeplacer.getPosition());
             }
         }
         uniteAdeplacer.resetDep();

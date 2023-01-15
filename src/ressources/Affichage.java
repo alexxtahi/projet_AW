@@ -252,7 +252,7 @@ public class Affichage {
     }
 
     /**
-     * Affiche un texte sur ue seule ligne dans la zone situee au-dessus de la
+     * Affiche un texte sur une seule ligne dans la zone situee au-dessus de la
      * carte.
      * 
      * @param message Le message a afficher

@@ -45,6 +45,12 @@ public class Config {
     /** Couleur d'arriere-plan de la fenetre de popup */
     final protected static Color POPUP_COULEUR_ARRIERE_PLAN = new Color(255, 255, 230);
 
+    /** Couleur des ppints de vie des unités */
+    final public static Color POINTS_DE_VIE_UNITES = new Color(255, 255, 255);
+
+    /** Police des points de vie des unités */
+    final public static Font POLICE_PV_UNITES = new Font(Font.SANS_SERIF, Font.BOLD, 16);
+
     /** Couleur du cadre de la fenetre de popup */
     final protected static Color POPUP_COULEUR_CADRE = new Color(120, 40, 0);
 

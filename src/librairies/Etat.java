@@ -195,11 +195,11 @@ public abstract class Etat {
         return curseurY;
     }
 
-    public int[] getPosition() {
+    public int[] getPositionCurseur() {
         return new int[] { curseurX, curseurY };
     }
 
-    public void setPosition(int[] position) {
+    public void setPositionCurseur(int[] position) {
         curseurX = position[0];
         curseurY = position[1];
     }
