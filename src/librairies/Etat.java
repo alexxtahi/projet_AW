@@ -11,197 +11,198 @@ import unites.Unite;
 
 public abstract class Etat {
 
-    protected Unite uniteAdeplacer;
-    protected Case destinationDuCurseur;
-    private boolean pasEnArriere;
-    private int curseurX;
-    private int curseurY;
+	protected Unite uniteAdeplacer;
+	protected Case destinationDuCurseur;
+	private boolean pasEnArriere;
+	private int curseurX;
+	private int curseurY;
 
-    protected List<Deplacement> listeDeplacements;
+	protected List<Deplacement> listeDeplacements;
+	protected List<Unite> listeUnitesDispo;
+	protected int indexUnite = 0;
 
-    public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
-        this.uniteAdeplacer = uniteAdeplacer;
-        this.destinationDuCurseur = null;
-        this.pasEnArriere = false;
-        this.curseurX = curseurX;
-        this.curseurY = curseurY;
-        listeDeplacements = new LinkedList<Deplacement>();
-    }
+	public abstract Etat actionG(Case[][] carte, int indexJoueurActif);
 
-    public List<Deplacement> getDeplacements() {
-        return new LinkedList<Deplacement>(listeDeplacements);
-    }
+	public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
+		this.uniteAdeplacer = uniteAdeplacer;
+		this.destinationDuCurseur = null;
+		this.pasEnArriere = false;
+		this.curseurX = curseurX;
+		this.curseurY = curseurY;
+		listeDeplacements = new LinkedList<Deplacement>();
+	}
 
-    public int getNombreDep() {
-        return listeDeplacements.size();
-    }
+	public List<Deplacement> getDeplacements() {
+		return new LinkedList<Deplacement>(listeDeplacements);
+	}
 
-    /**
-     * Ajoute un nouveau déplacement à la liste des déplacements que l'unité fait
-     *
-     * @param destination la destination de l'unité
-     * @param debut       la position initiale de l'unité
-     * @param fin         la position finale de l'unité
-     */
-    public void ajouteDeplacement(String debut, String fin) {
-        if (pasEnArriere) {
-            pasEnArriere = false;
-            System.out.println("Pas en arriere");
-            return;
-        }
-        System.out.println("Pas en avant");
+	public int getNombreDep() {
+		return listeDeplacements.size();
+	}
 
-        int coutDuDep = Deplacement.getCoutDuDep(uniteAdeplacer.getMoyenDeDep(),
-                this.destinationDuCurseur.getTerrain().getType());
+	/**
+	 * Ajoute un nouveau déplacement à la liste des déplacements que l'unité fait
+	 *
+	 * @param destination la destination de l'unité
+	 * @param debut       la position initiale de l'unité
+	 * @param fin         la position finale de l'unité
+	 */
+	public void ajouteDeplacement(String debut, String fin) {
+		if (pasEnArriere) {
+			pasEnArriere = false;
+			System.out.println("Pas en arriere");
+			return;
+		}
+		System.out.println("Pas en avant");
 
-        if (dernierDeplacement() == null) {
-            System.out.println("1er dep");
-            listeDeplacements
-                    .add(new Deplacement(this.destinationDuCurseur, Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_FIN,
-                            coutDuDep, getCurseurX(), getCurseurY()));
-        } else {
-            System.out.println("Nouveau dep");
-            dernierDeplacement().setFin(fin);
-            listeDeplacements
-                    .add(new Deplacement(this.destinationDuCurseur, debut, Chemins.DIRECTION_FIN, coutDuDep,
-                            getCurseurX(),
-                            getCurseurY()));
-        }
-        uniteAdeplacer.diminuePointsDep(coutDuDep);
-        System.out.println(uniteAdeplacer.getMoyenDeDep() + "/" + this.destinationDuCurseur.getTerrain().getType()
-                + " -> cout du déplacement: " + coutDuDep);
-    }
+		int coutDuDep = Deplacement.getCoutDuDep(uniteAdeplacer.getMoyenDeDep(),
+				this.destinationDuCurseur.getTerrain().getType());
 
-    // à revoir
+		if (dernierDeplacement() == null) {
+			System.out.println("1er dep");
+			listeDeplacements.add(new Deplacement(this.destinationDuCurseur, Chemins.DIRECTION_DEBUT,
+					Chemins.DIRECTION_FIN, coutDuDep, getCurseurX(), getCurseurY()));
+		} else {
+			System.out.println("Nouveau dep");
+			dernierDeplacement().setFin(fin);
+			listeDeplacements.add(new Deplacement(this.destinationDuCurseur, debut, Chemins.DIRECTION_FIN, coutDuDep,
+					getCurseurX(), getCurseurY()));
+		}
+		uniteAdeplacer.diminuePointsDep(coutDuDep);
+		System.out.println(uniteAdeplacer.getMoyenDeDep() + "/" + this.destinationDuCurseur.getTerrain().getType()
+				+ " -> cout du déplacement: " + coutDuDep);
+	}
 
-    public boolean depEnArriere() {
-        // On vérifie si le joueur a fait un pas en arrière
-        if (Jeu.memesPositions(destinationDuCurseur.getPosition(), uniteAdeplacer.getPosition())) {
-            pasEnArriere = true;
-            listeDeplacements.clear();
-            uniteAdeplacer.resetDep();
-        } else {
-            int depDepenses = 0;
-            LinkedList<Deplacement> trajetAeffacer = new LinkedList<Deplacement>();
-            for (Deplacement dep : listeDeplacements) {
-                if (!pasEnArriere && Jeu.memesPositions(destinationDuCurseur.getPosition(), dep.getPosition())) {
-                    pasEnArriere = true;
-                    dep.setFin(Chemins.DIRECTION_FIN);
-                } else if (pasEnArriere && dep != null) {
-                    depDepenses += dep.getCout();
-                    trajetAeffacer.add(dep);
-                }
-            }
-            listeDeplacements.removeAll(trajetAeffacer);
-            uniteAdeplacer.restorePointsDep(depDepenses);
-        }
-        return pasEnArriere;
-    }
+	// à revoir
 
-    /**
-     * Récupère le dernier déplacement de l'unité
-     * 
-     * @return le dernier déplacement
-     */
-    public Deplacement dernierDeplacement() {
-        if (listeDeplacements.size() != 0)
-            return listeDeplacements.get(listeDeplacements.size() - 1);
-        return null;
-    }
+	public boolean depEnArriere() {
+		// On vérifie si le joueur a fait un pas en arrière
+		if (Jeu.memesPositions(destinationDuCurseur.getPosition(), uniteAdeplacer.getPosition())) {
+			pasEnArriere = true;
+			listeDeplacements.clear();
+			uniteAdeplacer.resetDep();
+		} else {
+			int depDepenses = 0;
+			LinkedList<Deplacement> trajetAeffacer = new LinkedList<Deplacement>();
+			for (Deplacement dep : listeDeplacements) {
+				if (!pasEnArriere && Jeu.memesPositions(destinationDuCurseur.getPosition(), dep.getPosition())) {
+					pasEnArriere = true;
+					dep.setFin(Chemins.DIRECTION_FIN);
+				} else if (pasEnArriere && dep != null) {
+					depDepenses += dep.getCout();
+					trajetAeffacer.add(dep);
+				}
+			}
+			listeDeplacements.removeAll(trajetAeffacer);
+			uniteAdeplacer.restorePointsDep(depDepenses);
+		}
+		return pasEnArriere;
+	}
 
-    public boolean isOutOfLimit(int x, int y) {
-        boolean outOfLimitVert = getCurseurX() + x < 0 || getCurseurX() + x > Config.longueurCarteXCases - 1;
-        boolean outOfLimitHoriz = getCurseurY() + y < 0 || getCurseurY() + y > Config.longueurCarteYCases - 1;
-        return (outOfLimitVert || outOfLimitHoriz);
-    }
+	/**
+	 * Récupère le dernier déplacement de l'unité
+	 * 
+	 * @return le dernier déplacement
+	 */
+	public Deplacement dernierDeplacement() {
+		if (listeDeplacements.size() != 0)
+			return listeDeplacements.get(listeDeplacements.size() - 1);
+		return null;
+	}
 
-    /**
-     * Déplace le curseur vers le haut sans sortir de la grille
-     *
-     * @return la même instance de la classe Etat
-     */
-    public Etat actionHaut(Case[][] carte) {
-        if (!isOutOfLimit(0, 1)) {
-            deplaceCurseur(0, 1);
-            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
-        }
-        return this;
-    }
+	public boolean isOutOfLimit(int x, int y) {
+		boolean outOfLimitVert = getCurseurX() + x < 0 || getCurseurX() + x > Config.longueurCarteXCases - 1;
+		boolean outOfLimitHoriz = getCurseurY() + y < 0 || getCurseurY() + y > Config.longueurCarteYCases - 1;
+		return (outOfLimitVert || outOfLimitHoriz);
+	}
 
-    /**
-     * Déplace le curseur vers le bas sans sortir de la grille
-     * 
-     * @return la même instance de la classe Etat
-     * 
-     */
-    public Etat actionBas(Case[][] carte) {
-        if (!isOutOfLimit(0, -1)) {
-            deplaceCurseur(0, -1);
-            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
-        }
-        return this;
-    }
+	/**
+	 * Déplace le curseur vers le haut sans sortir de la grille
+	 *
+	 * @return la même instance de la classe Etat
+	 */
+	public Etat actionHaut(Case[][] carte) {
+		if (!isOutOfLimit(0, 1)) {
+			deplaceCurseur(0, 1);
+			destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+		}
+		return this;
+	}
 
-    /**
-     * Déplace le curseur vers la gauche sans sortir de la grille
-     * 
-     * @return la même instance de la classe Etat
-     * 
-     */
-    public Etat actionGauche(Case[][] carte) {
-        if (!isOutOfLimit(-1, 0)) {
-            deplaceCurseur(-1, 0);
-            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
-        }
-        return this;
-    }
+	/**
+	 * Déplace le curseur vers le bas sans sortir de la grille
+	 * 
+	 * @return la même instance de la classe Etat
+	 * 
+	 */
+	public Etat actionBas(Case[][] carte) {
+		if (!isOutOfLimit(0, -1)) {
+			deplaceCurseur(0, -1);
+			destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+		}
+		return this;
+	}
 
-    /**
-     * Déplace le curseur vers la droite sans sortir de la grille
-     * 
-     * @return la même instance de la classe Etat
-     * 
-     */
+	/**
+	 * Déplace le curseur vers la gauche sans sortir de la grille
+	 * 
+	 * @return la même instance de la classe Etat
+	 * 
+	 */
+	public Etat actionGauche(Case[][] carte) {
+		if (!isOutOfLimit(-1, 0)) {
+			deplaceCurseur(-1, 0);
+			destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+		}
+		return this;
+	}
 
-    public Etat actionDroite(Case[][] carte) {
-        if (!isOutOfLimit(1, 0)) {
-            deplaceCurseur(1, 0);
-            destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
-        }
-        return this;
-    }
+	/**
+	 * Déplace le curseur vers la droite sans sortir de la grille
+	 * 
+	 * @return la même instance de la classe Etat
+	 * 
+	 */
 
-    public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
+	public Etat actionDroite(Case[][] carte) {
+		if (!isOutOfLimit(1, 0)) {
+			deplaceCurseur(1, 0);
+			destinationDuCurseur = carte[getCurseurY()][getCurseurX()];
+		}
+		return this;
+	}
 
-    public abstract Etat actionEchap();
+	public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
-    /**
-     * Déplace le curseur en fonction des coordonnées placées en paramètre
-     * 
-     * @param x la nouvelle position du curseur sur l'axe x
-     * @param y la nouvelle position du curseur sur l'axe y
-     * 
-     */
-    public void deplaceCurseur(int x, int y) {
-        curseurX += x;
-        curseurY += y;
-    }
+	public abstract Etat actionEchap();
 
-    public int getCurseurX() {
-        return curseurX;
-    }
+	/**
+	 * Déplace le curseur en fonction des coordonnées placées en paramètre
+	 * 
+	 * @param x la nouvelle position du curseur sur l'axe x
+	 * @param y la nouvelle position du curseur sur l'axe y
+	 * 
+	 */
+	public void deplaceCurseur(int x, int y) {
+		curseurX += x;
+		curseurY += y;
+	}
 
-    public int getCurseurY() {
-        return curseurY;
-    }
+	public int getCurseurX() {
+		return curseurX;
+	}
 
-    public int[] getPositionCurseur() {
-        return new int[] { curseurX, curseurY };
-    }
+	public int getCurseurY() {
+		return curseurY;
+	}
 
-    public void setPositionCurseur(int[] position) {
-        curseurX = position[0];
-        curseurY = position[1];
-    }
+	public int[] getPositionCurseur() {
+		return new int[] { curseurX, curseurY };
+	}
+
+	public void setPositionCurseur(int[] position) {
+		curseurX = position[0];
+		curseurY = position[1];
+	}
 
 }

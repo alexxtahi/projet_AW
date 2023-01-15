@@ -133,6 +133,12 @@ public class ChoisitTrajet extends Etat {
     public Etat actionEchap() {
         uniteAdeplacer.resetDep();
         return new NavigationLibre(getCurseurX(), getCurseurY());
+
+    }
+
+    @Override
+    public Etat actionG(Case[][] carte, int indexJoueurActif) {
+        return this;
     }
 
 }
