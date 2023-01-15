@@ -152,19 +152,8 @@ public class Jeu {
 		StdDraw.clear();
 		afficheStatutJeu();
 		afficheCases();
-
-		// ! TEST
-		Affichage.dessineImageDansCase(1, 1,
-				Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_HAUT));
-		Affichage.dessineImageDansCase(2, 1, Chemins.getCheminFleche(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_HAUT));
-		Affichage.dessineImageDansCase(2, 2, Chemins.getCheminFleche(Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT));
-		Affichage.dessineImageDansCase(2, 3, Chemins.getCheminFleche(Chemins.DIRECTION_BAS, Chemins.DIRECTION_FIN));
-
-		Affichage.dessineImageDansCase(4, 4, Chemins.getCheminFleche(Chemins.DIRECTION_DEBUT, Chemins.DIRECTION_FIN));
-		// ! FIN TEST
-
-		Affichage.dessineGrille(); // Affiche une grille, mais n'affiche rien dans
-		// les cases
+		// Affiche une grille, mais n'affiche rien dans les cases
+		Affichage.dessineGrille();
 		drawGameCursor(); // Dessine le curseur sur la fenêtre
 		StdDraw.show(); // Montre a l'ecran les changement demandes
 	}
@@ -186,6 +175,15 @@ public class Jeu {
 	}
 
 	public void changeTour() {
+		// Rendre les unités d'un joueur disponibles à la fin de son tour
+		for (Case[] ligne : carte) {
+			for (Case c : ligne) {
+				Unite unite = c.getUnite();
+				if (unite != null && unite.getJoueur().getId() == indexJoueurActif) {
+					unite.setDispo(true);
+				}
+			}
+		}
 		if (indexJoueurActif == 1) {
 			indexJoueurActif = 2;
 		} else {

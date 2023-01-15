@@ -82,15 +82,17 @@ public abstract class Etat {
             uniteAdeplacer.resetDep();
         } else {
             int depDepenses = 0;
+            LinkedList<Deplacement> trajetAeffacer = new LinkedList<Deplacement>();
             for (Deplacement dep : listeDeplacements) {
                 if (!pasEnArriere && Jeu.memesPositions(destinationDuCurseur.getPosition(), dep.getPosition())) {
                     pasEnArriere = true;
                     dep.setFin(Chemins.DIRECTION_FIN);
-                } else if (pasEnArriere) {
+                } else if (pasEnArriere && dep != null) {
                     depDepenses += dep.getCout();
-                    listeDeplacements.remove(dep);
+                    trajetAeffacer.add(dep);
                 }
             }
+            listeDeplacements.removeAll(trajetAeffacer);
             uniteAdeplacer.restorePointsDep(depDepenses);
         }
         return pasEnArriere;

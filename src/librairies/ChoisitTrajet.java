@@ -19,8 +19,6 @@ public class ChoisitTrajet extends Etat {
         int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
                 super.destinationDuCurseur.getTerrain().getType());
 
-        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
-
         return (super.depEnArriere() || (super.uniteAdeplacer.estDispo() && coutDuDep != -1
                 && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0));
     }
@@ -34,6 +32,8 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_BAS, Chemins.DIRECTION_HAUT);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
+
         return this;
     }
 
@@ -46,6 +46,7 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_HAUT, Chemins.DIRECTION_BAS);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
@@ -58,6 +59,7 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_DROITE, Chemins.DIRECTION_GAUCHE);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
@@ -70,13 +72,16 @@ public class ChoisitTrajet extends Etat {
                 ajouteDeplacement(Chemins.DIRECTION_GAUCHE, Chemins.DIRECTION_DROITE);
             }
         }
+        System.out.println("Deps restants: " + super.uniteAdeplacer.getPointsDep());
         return this;
     }
 
     @Override
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
         Case caseDarrivee = carte[getCurseurY()][getCurseurX()];
-        if (Jeu.memesPositions(getPosition(), dernierDeplacement().getPosition()) && caseDarrivee.getUnite() == null) {
+        Deplacement dernierDep = dernierDeplacement();
+        if (dernierDep != null && Jeu.memesPositions(getPosition(), dernierDep.getPosition())
+                && caseDarrivee.getUnite() == null) {
             uniteAdeplacer.move(getCurseurX(), getCurseurY());
             caseDeDepart.setUnite(null);
             caseDarrivee.setUnite(uniteAdeplacer);
