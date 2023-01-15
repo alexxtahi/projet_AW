@@ -190,6 +190,7 @@ public class Jeu {
 		}
 		// Changer le joueur actif en fct du nouvel index
 		joueurActif = joueurs.get(indexJoueurActif);
+		etat.clearListeUnitesDispos();
 		// Augmenter l'argent du joueur en fct de ses propriétés
 		joueurActif.addMoney();
 		TestJeu.afficheArgentDesJoueurs(joueurs);

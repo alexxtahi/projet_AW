@@ -55,33 +55,24 @@ public class NavigationLibre extends Etat {
 
 	@Override
 	public Etat actionG(Case[][] carte, int indexJoueurActif) {
-		if (listeUnitesDispo == null) {
-			listeUnitesDispo = new ArrayList<Unite>();
+		if (listeUnitesDispo.size() == 0) {
 			for (Case[] ligne : carte) {
 				for (Case c : ligne) {
 					Unite unite = c.getUnite();
 					if (unite != null && unite.getJoueur().getId() == indexJoueurActif && unite.estDispo()) {
 						listeUnitesDispo.add(unite);
-
 					}
 				}
-
 			}
-			if (listeUnitesDispo.size() != 0) {
-				this.setPositionCurseur(listeUnitesDispo.get(0).getPosition());
+			this.setPositionCurseur(listeUnitesDispo.get(0).getPosition());
+		} else {
+			if (indexUniteDispo < listeUnitesDispo.size()) {
+				indexUniteDispo++;
 			}
-
-		}
-
-		else {
-			if (indexUnite < listeUnitesDispo.size()) {
-				indexUnite++;
-
+			if (indexUniteDispo >= listeUnitesDispo.size()) {
+				indexUniteDispo = 0;
 			}
-			if (indexUnite >= listeUnitesDispo.size()) {
-				indexUnite = 0;
-			}
-			this.setPositionCurseur(listeUnitesDispo.get(indexUnite).getPosition());
+			this.setPositionCurseur(listeUnitesDispo.get(indexUniteDispo).getPosition());
 		}
 		return this;
 

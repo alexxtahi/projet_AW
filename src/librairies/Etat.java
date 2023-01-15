@@ -19,9 +19,7 @@ public abstract class Etat {
 
 	protected List<Deplacement> listeDeplacements;
 	protected List<Unite> listeUnitesDispo;
-	protected int indexUnite = 0;
-
-	public abstract Etat actionG(Case[][] carte, int indexJoueurActif);
+	protected int indexUniteDispo;
 
 	public Etat(Unite uniteAdeplacer, int curseurX, int curseurY) {
 		this.uniteAdeplacer = uniteAdeplacer;
@@ -30,10 +28,16 @@ public abstract class Etat {
 		this.curseurX = curseurX;
 		this.curseurY = curseurY;
 		listeDeplacements = new LinkedList<Deplacement>();
+		listeUnitesDispo = new LinkedList<Unite>();
+		this.indexUniteDispo = 0;
 	}
 
 	public List<Deplacement> getDeplacements() {
 		return new LinkedList<Deplacement>(listeDeplacements);
+	}
+
+	public void clearListeUnitesDispos() {
+		listeUnitesDispo.clear();
 	}
 
 	public int getNombreDep() {
@@ -175,6 +179,8 @@ public abstract class Etat {
 	public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
 	public abstract Etat actionEchap();
+
+	public abstract Etat actionG(Case[][] carte, int indexJoueurActif);
 
 	/**
 	 * Déplace le curseur en fonction des coordonnées placées en paramètre
