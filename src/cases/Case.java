@@ -27,13 +27,22 @@ public class Case {
         return terrain;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
     public int[] getPosition() {
         return new int[] { x, y };
     }
 
     public void affiche() {
         terrain.affiche();
-        if (unite != null)
+        if (unite != null) {
             unite.affiche();
+        }
     }
 }

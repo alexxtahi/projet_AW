@@ -1,15 +1,21 @@
 package unites;
 
+import java.util.ArrayList;
+
+import cases.Case;
+import librairies.Arme;
 import main.Joueur;
 import ressources.Affichage;
 import ressources.Chemins;
+import ressources.Config;
 
 public class Unite {
 
 	private Joueur joueur;
 	private String image;
 	private String moyenDeDep;
-	private double pointsVie;
+	private String arme;
+	private float pointsVie;
 	private int pointsDepMax;
 	private int pointsDep;
 	private int prix;
@@ -17,11 +23,12 @@ public class Unite {
 	private int y;
 	private boolean disponible;
 
-	public Unite(Joueur joueur, String image, String moyenDeDep, int pointsDep, int prix, int x, int y) {
+	public Unite(Joueur joueur, String image, String moyenDeDep, String arme, int pointsDep, int prix, int x, int y) {
 		this.joueur = joueur;
 		this.image = image;
 		this.moyenDeDep = moyenDeDep;
-		this.pointsVie = 10;
+		this.arme = arme;
+		this.pointsVie = 10f;
 		this.pointsDepMax = this.pointsDep = pointsDep;
 		this.prix = prix;
 		this.x = x;
@@ -43,28 +50,51 @@ public class Unite {
 	public static Unite genererUniteParType(String type, Joueur joueur, int x, int y) {
 		switch (type) {
 			case "Artillerie":
-				return new Artillerie(joueur, "Pieds", x, y);
+				return new Artillerie(joueur, "Pieds", "Mortier", x, y);
 			case "Bazooka":
-				return new Bazooka(joueur, "Pieds", x, y);
+				return new Bazooka(joueur, "Pieds", "Canon", x, y);
 			case "Bombardier":
-				return new Bombardier(joueur, "Aerien", x, y);
+				return new Bombardier(joueur, "Aerien", "Bombes", x, y);
 			case "Convoit":
-				return new Convoit(joueur, "Chenilles", x, y);
+				return new Convoit(joueur, "Chenilles", null, x, y);
 			case "DCA":
-				return new DCA(joueur, "Chenilles", x, y);
+				return new DCA(joueur, "Chenilles", "Mlourde", x, y);
 			case "Helico":
-				return new Helico(joueur, "Aerien", x, y);
+				return new Helico(joueur, "Aerien", "Missiles", x, y);
 			case "Infanterie":
-				return new Infanterie(joueur, "Pieds", x, y);
+				return new Infanterie(joueur, "Pieds", "Mlegere", x, y);
 			case "Tank":
-				return new Tank(joueur, "Chenilles", x, y);
+				return new Tank(joueur, "Chenilles", "Canon", x, y);
 			default:
 				return null;
 		}
 	}
 
-	public double getPointsVie() {
+	public ArrayList<Unite> detectEnnemisProches(Case[][] carte, Case destination) {
+		ArrayList<Unite> unitesEnnemies = new ArrayList<Unite>(4);
+		for (int i = destination.getX() - 1; i <= destination.getX() + 1; i++) {
+			for (int j = destination.getY() - 1; j <= destination.getY() + 1; j++) {
+				if ((0 <= i && i < Config.longueurCarteXCases) && (0 <= j && j < Config.longueurCarteYCases)) {
+					Unite uniteAdjacente = carte[j][i].getUnite();
+					if (uniteAdjacente != null
+							&& (uniteAdjacente.getX() == destination.getX()
+									|| uniteAdjacente.getY() == destination.getY())
+							&& uniteAdjacente.getJoueur().getId() != this.joueur.getId()) {
+						unitesEnnemies.add(uniteAdjacente);
+						System.out.println(j + "," + i + " -> " + uniteAdjacente.getClass().getName());
+					}
+				}
+			}
+		}
+		return unitesEnnemies;
+	}
+
+	public float getPointsVie() {
 		return pointsVie;
+	}
+
+	public int getPointsVieArrondis() {
+		return (int) Math.ceil(pointsVie);
 	}
 
 	/**
@@ -78,6 +108,13 @@ public class Unite {
 
 	public void restorePointsVie(float pv) {
 		pointsVie += pv;
+	}
+
+	public void attaque(Unite uniteAattaquer) {
+		float efficaciteArme = Arme.efficacites.get(this.arme).get(uniteAattaquer.getClass().getSimpleName());
+		float degats = getPointsVieArrondis() * efficaciteArme;
+		uniteAattaquer.diminuePV(degats);
+		System.out.println("Attaque");
 	}
 
 	public int getPointsDep() {
@@ -112,6 +149,14 @@ public class Unite {
 
 	public int getPrix() {
 		return prix;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
 	}
 
 	public int[] getPosition() {
@@ -153,6 +198,12 @@ public class Unite {
 	 * Affiche l'image de l'unité à l'écran
 	 */
 	public void affiche() {
-		Affichage.dessineImageDansCase(x, y, Chemins.getCheminUnite(joueur.getId(), disponible, image));
+		if (pointsVie > 0.0f) {
+			Affichage.dessineImageDansCase(x, y, Chemins.getCheminUnite(joueur.getId(), disponible, image));
+			if (pointsVie != 10) {
+				Affichage.afficheTexteDansCase(x, y, getPointsVieArrondis() + "", Config.POINTS_DE_VIE_UNITES, 0.7, 0.2,
+						Config.POLICE_PV_UNITES);
+			}
+		}
 	}
 }

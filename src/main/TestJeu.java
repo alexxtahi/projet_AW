@@ -15,7 +15,7 @@ public class TestJeu {
      * @param carteString la carte du jeu
      */
     public static void afficheElementDansCase(int x, int y, Case[][] carteString) {
-        System.out.println("(x: " + x + ", y: " + y + ") -> " + carteString[y][x]);
+        System.out.println("(x: " + x + ", y: " + y + ") -> " + carteString[y][x].getUnite());
     }
 
     /**
