@@ -17,11 +17,18 @@ public class ChoisitTrajet extends Etat {
     }
 
     private boolean canUniteMove() {
-        int coutDuDep = Deplacement.getCoutDuDep(super.uniteAdeplacer.getMoyenDeDep(),
-                super.destinationDuCurseur.getTerrain().getType());
+        String moyenDeDep = super.uniteAdeplacer.getMoyenDeDep();
+        String terrainDeDestination = super.destinationDuCurseur.getTerrain().getType();
+        boolean uniteEnnemiPresente = false;
+        if (super.destinationDuCurseur.getUnite() != null
+                && super.destinationDuCurseur.getUnite().getJoueur().getId() != uniteAdeplacer.getJoueur().getId()) {
+            uniteEnnemiPresente = true;
+        }
+
+        int coutDuDep = Deplacement.getCoutDuDep(moyenDeDep, terrainDeDestination);
 
         return (super.depEnArriere() || (super.uniteAdeplacer.estDispo() && coutDuDep != -1
-                && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0));
+                && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0 && !uniteEnnemiPresente));
     }
 
     @Override
