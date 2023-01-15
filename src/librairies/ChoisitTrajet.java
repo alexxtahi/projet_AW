@@ -2,6 +2,7 @@ package librairies;
 
 import cases.Case;
 import main.Jeu;
+import ressources.Affichage;
 import ressources.Chemins;
 import unites.Unite;
 
@@ -82,10 +83,22 @@ public class ChoisitTrajet extends Etat {
         Deplacement dernierDep = dernierDeplacement();
         if (dernierDep != null && Jeu.memesPositions(getPosition(), dernierDep.getPosition())
                 && caseDarrivee.getUnite() == null) {
-            uniteAdeplacer.move(getCurseurX(), getCurseurY());
-            caseDeDepart.setUnite(null);
-            caseDarrivee.setUnite(uniteAdeplacer);
+            // Choix de l'action à effectuer par l'unité
+            String[] actions = { "Attendre" };
+            if (Affichage.popup("Choisissez l'action à effectuer :", actions, true, 0) == 0) {
+                uniteAdeplacer.move(getCurseurX(), getCurseurY());
+                caseDeDepart.setUnite(null);
+                caseDarrivee.setUnite(uniteAdeplacer);
+            } else {
+                setPosition(uniteAdeplacer.getPosition());
+            }
         }
+        uniteAdeplacer.resetDep();
+        return new NavigationLibre(getCurseurX(), getCurseurY());
+    }
+
+    @Override
+    public Etat actionEchap() {
         uniteAdeplacer.resetDep();
         return new NavigationLibre(getCurseurX(), getCurseurY());
     }

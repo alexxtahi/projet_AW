@@ -173,6 +173,8 @@ public abstract class Etat {
 
     public abstract Etat actionEntree(Case[][] carte, int indexJoueurActif);
 
+    public abstract Etat actionEchap();
+
     /**
      * Déplace le curseur en fonction des coordonnées placées en paramètre
      * 
@@ -195,6 +197,11 @@ public abstract class Etat {
 
     public int[] getPosition() {
         return new int[] { curseurX, curseurY };
+    }
+
+    public void setPosition(int[] position) {
+        curseurX = position[0];
+        curseurY = position[1];
     }
 
 }

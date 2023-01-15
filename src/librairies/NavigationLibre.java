@@ -46,4 +46,9 @@ public class NavigationLibre extends Etat {
         return this;
     }
 
+    @Override
+    public Etat actionEchap() {
+        return this;
+    }
+
 }

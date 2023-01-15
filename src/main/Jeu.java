@@ -225,6 +225,9 @@ public class Jeu {
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
 			etat = etat.actionEntree(carte, indexJoueurActif);
 		}
+		if (toucheSuivante.isEchap()) {
+			etat = etat.actionEchap();
+		}
 		// Actualisation de l'affichage
 		display();
 	}
