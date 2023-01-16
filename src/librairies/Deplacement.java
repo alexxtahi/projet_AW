@@ -15,15 +15,6 @@ public class Deplacement {
 	private int y;
 	private int cout;
 
-	public Deplacement(Case destination, String debut, String fin, int x, int y) {
-		// this.destination = destination;
-		this.image = Chemins.getCheminFleche(debut, fin);
-		this.debut = debut;
-		this.fin = fin;
-		this.x = x;
-		this.y = y;
-	}
-
 	public Deplacement(Case destination, String debut, String fin, int cout, int x, int y) {
 		// this.destination = destination;
 		this.image = Chemins.getCheminFleche(debut, fin);
@@ -35,12 +26,13 @@ public class Deplacement {
 	}
 
 	/**
-	 * Calcule et renvoie le coût du déplacement en fonction du moyen de déplacement
-	 * et du type de l'unité terrain
+	 * Calcule et renvoie le coût d'un déplacement en fonction du moyen de
+	 * déplacement et du type de l'unité sélectionnée
 	 * 
-	 * @param moyenDeDep
-	 * @param typeDeTerrain
-	 * @return moyen de locomotion
+	 * @param moyenDeDep    Le moyen de déplacement utilisé par l'unité sélectionnée
+	 * @param typeDeTerrain Le type de terrain à traverser
+	 * @return Le cout du déplacement de l'unité vers ce terrain, -1 si le terrain
+	 *         est inaccessible pour l'unité
 	 * 
 	 */
 	protected static int getCoutDuDep(String moyenDeDep, String typeDeTerrain) {
@@ -59,37 +51,55 @@ public class Deplacement {
 		return -1;
 	}
 
+	/**
+	 * Renvoi la position du déplacement sur les deux axes (x,y)
+	 * 
+	 * @return Un tableau d'entiers correspondant à la position sur les deux axes
+	 *         (x,y)
+	 */
 	public int[] getPosition() {
 		return new int[] { x, y };
 	}
 
+	/**
+	 * Renvoi la direction de début du déplacement
+	 * 
+	 * @return La direction de début du déplacement
+	 */
 	public String getDebut() {
 		return debut;
 	}
 
+	/**
+	 * Renvoi le cout qu'il a fallu pour effectuer le déplacement
+	 * 
+	 * @return Le cout du déplacement
+	 */
 	public int getCout() {
 		return cout;
 	}
 
+	/**
+	 * Renvoi la direction de fin du déplacement
+	 * 
+	 * @return La direction de fin du déplacement
+	 */
 	public String getFin() {
 		return fin;
 	}
 
 	/**
-	 * modifie l'ancienne fin pour afficher la nouvelle fin
+	 * Affecte une nouvelle direction de fin au déplacement
 	 * 
-	 * @param nouvelleFin la nouvelle position de l'unité
-	 * 
+	 * @param nouvelleFin la nouvelle direction de la fin
 	 */
-
 	public void setFin(String nouvelleFin) {
 		fin = nouvelleFin;
 		image = Chemins.getCheminFleche(debut, nouvelleFin);
 	}
 
 	/**
-	 * affiche l'image correspondant au déplacéments
-	 * 
+	 * Affiche l'image correspondant au déplacément
 	 */
 	public void affiche() {
 		Affichage.dessineImageDansCase(x, y, image);

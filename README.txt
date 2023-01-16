@@ -3,6 +3,7 @@
 Binôme:
 - TAHI Ezan
 - DIENG Yama Dior
+- COULIBALY Aminata
 
 Travail réalisé:
 
@@ -29,7 +30,10 @@ Chaque unité a eue droit à une classe dans le dossier /src/unites qui hériten
 Elle dispose elle aussi d'une méthode affiche() jouant le même rôle que la méthode du même nom dans la classe Terrain.
 
 3. Déplacements des unités
-pour deplacer une unité il faut au préalable avoir la destination et le cout du deplacement pour savoir si l'unité est en mesure de se deplacer nous avons utiliser la méthode getCoutDuDep() pour calculer le coût du déplacement 
+pour cela il faut au préalable avoir la destination et le cout du deplacement pour savoir si l'unité est en mesure de se deplacer nous avons utiliser la méthode getCoutDuDep() pour calculer le coût du déplacement 
 si l'unité peut 
 
 
+4. Touche pour lister les unités encore utilisables (bonus 1)
+
+PointG est une fonction qui prend en paramètre la carte et l’index du joueur. Elle permet à partir du curseur d’identifier toutes les unités disponibles pour le joueur courant.

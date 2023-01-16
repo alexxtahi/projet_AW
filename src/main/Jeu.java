@@ -210,11 +210,6 @@ public class Jeu {
 		if (toucheSuivante.isDroite())
 			etat = etat.actionDroite(carte);
 
-		if (toucheSuivante.isCaractere('g')) {
-			etat = etat.actionG(carte, indexJoueurActif);
-
-		}
-
 		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
 		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
 		if (toucheSuivante.isCaractere('t')) { // Finir le tour du joueur actif
@@ -224,6 +219,11 @@ public class Jeu {
 				changeTour();
 			}
 		}
+
+		if (toucheSuivante.isCaractere('y')) {
+			etat = etat.actionY(carte, indexJoueurActif);
+		}
+
 		if (toucheSuivante.isEntree()) { // Action de la touche entrée
 			// Sélectionner une unité
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);

@@ -54,7 +54,7 @@ public class NavigationLibre extends Etat {
 	}
 
 	@Override
-	public Etat actionG(Case[][] carte, int indexJoueurActif) {
+	public Etat actionY(Case[][] carte, int indexJoueurActif) {
 		if (listeUnitesDispo.size() == 0) {
 			for (Case[] ligne : carte) {
 				for (Case c : ligne) {

@@ -26,10 +26,20 @@ public class Propriete extends Terrain {
         }
     }
 
+    /**
+     * Renvoi le joueur affecté à la propriété
+     * 
+     * @return Le joueur propriétaire
+     */
     public Joueur getJoueur() {
         return joueur;
     }
 
+    /**
+     * Permet d'affecter un joueur à la propriété
+     * 
+     * @param joueur L'instance de joueur à affecter
+     */
     public void setJoueur(Joueur joueur) {
         this.joueur = joueur;
     }

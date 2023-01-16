@@ -18,6 +18,12 @@ public class ChoisitTrajet extends Etat {
                 + uniteAdeplacer.getPointsDep());
     }
 
+    /**
+     * Vérifie si l'unité sélectionnée peut aller dans la case où le joueur souhaite
+     * la déplacer
+     * 
+     * @return true si l'unité peut se déplacer, false sinon
+     */
     private boolean canUniteMove() {
         String moyenDeDep = super.uniteAdeplacer.getMoyenDeDep();
         String terrainDeDestination = super.destinationDuCurseur.getTerrain().getType();
@@ -33,6 +39,13 @@ public class ChoisitTrajet extends Etat {
                 && super.uniteAdeplacer.getPointsDep() - coutDuDep >= 0 && !uniteEnnemiPresente));
     }
 
+    /**
+     * Déplace le curseur et l'unité sélectionnée vers la droite sans sortir de la
+     * grille
+     *
+     * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+     * @return l'instance modifiée de la classe
+     */
     @Override
     public Etat actionHaut(Case[][] carte) {
         if (!isOutOfLimit(0, 1)) {
@@ -47,6 +60,13 @@ public class ChoisitTrajet extends Etat {
         return this;
     }
 
+    /**
+     * Déplace le curseur et l'unité sélectionnée vers le bas sans sortir de la
+     * grille
+     *
+     * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+     * @return l'instance modifiée de la classe
+     */
     @Override
     public Etat actionBas(Case[][] carte) {
         if (!isOutOfLimit(0, -1)) {
@@ -60,6 +80,13 @@ public class ChoisitTrajet extends Etat {
         return this;
     }
 
+    /**
+     * Déplace le curseur et l'unité sélectionnée vers la gauche sans sortir de la
+     * grille
+     *
+     * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+     * @return l'instance modifiée de la classe
+     */
     @Override
     public Etat actionGauche(Case[][] carte) {
         if (!isOutOfLimit(-1, 0)) {
@@ -73,6 +100,13 @@ public class ChoisitTrajet extends Etat {
         return this;
     }
 
+    /**
+     * Déplace le curseur et l'unité sélectionnée vers la droite sans sortir de la
+     * grille
+     *
+     * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+     * @return l'instance modifiée de la classe
+     */
     @Override
     public Etat actionDroite(Case[][] carte) {
         if (!isOutOfLimit(1, 0)) {
@@ -86,6 +120,15 @@ public class ChoisitTrajet extends Etat {
         return this;
     }
 
+    /**
+     * Permet de valider la destination de l'unité sélectionnée et d'attaquer une
+     * unité ennemie à portée
+     *
+     * @param carte            Un tableau à 2 dimensions représentant la carte du
+     *                         jeu
+     * @param indexJoueurActif Le numéro du joueur actif
+     * @return l'instance modifiée de la classe pour passer en navigation libre
+     */
     @Override
     public Etat actionEntree(Case[][] carte, int indexJoueurActif) {
         Case caseDarrivee = carte[getCurseurY()][getCurseurX()];
@@ -117,11 +160,11 @@ public class ChoisitTrajet extends Etat {
                 if (uniteAattaquer.getPointsVie() > 0.0f) {
                     uniteAattaquer.attaque(uniteAdeplacer);
                     System.out.println("Riposte");
-                } else { // Destruction de l'unité
+                } else { // Destruction de l'unité attaquée
                     carte[uniteAattaquer.getY()][uniteAattaquer.getX()].setUnite(null);
                     uniteAattaquer = null;
                 }
-            } else {
+            } else { // On ramène juste le curseur à sa position de départ
                 setPositionCurseur(uniteAdeplacer.getPosition());
             }
         }
@@ -129,6 +172,11 @@ public class ChoisitTrajet extends Etat {
         return new NavigationLibre(getCurseurX(), getCurseurY());
     }
 
+    /**
+     * Annule le déplacement de l'unité sélectionnée
+     * 
+     * @return l'instance modifiée de la classe pour passer en navigation libre
+     */
     @Override
     public Etat actionEchap() {
         uniteAdeplacer.resetDep();
@@ -136,8 +184,11 @@ public class ChoisitTrajet extends Etat {
 
     }
 
+    /**
+     * Bonus 1: La vraie implémentation se trouve dans la classe Navigationlibre
+     */
     @Override
-    public Etat actionG(Case[][] carte, int indexJoueurActif) {
+    public Etat actionY(Case[][] carte, int indexJoueurActif) {
         return this;
     }
 

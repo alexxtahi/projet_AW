@@ -27,29 +27,43 @@ public abstract class Etat {
 		this.pasEnArriere = false;
 		this.curseurX = curseurX;
 		this.curseurY = curseurY;
-		listeDeplacements = new LinkedList<Deplacement>();
-		listeUnitesDispo = new LinkedList<Unite>();
+		this.listeDeplacements = new LinkedList<Deplacement>();
+		this.listeUnitesDispo = new LinkedList<Unite>();
 		this.indexUniteDispo = 0;
 	}
 
+	/**
+	 * Renvoi la liste des déplacements enregistré
+	 *
+	 * @return La liste des déplacements éffectués par l'unité séléectionnée par le
+	 *         joueur
+	 */
 	public List<Deplacement> getDeplacements() {
 		return new LinkedList<Deplacement>(listeDeplacements);
 	}
 
+	/**
+	 * Réinitialise la liste des unités dispo d'un joueur
+	 */
 	public void clearListeUnitesDispos() {
 		listeUnitesDispo.clear();
 	}
 
+	/**
+	 * Renvoi le nombre de déplacement de l'unité sélectionnée par le joueur
+	 * 
+	 * @return Le nombre de déplacements
+	 */
 	public int getNombreDep() {
 		return listeDeplacements.size();
 	}
 
 	/**
-	 * Ajoute un nouveau déplacement à la liste des déplacements que l'unité fait
+	 * Ajoute un nouveau déplacement à la liste des déplacements de l'unité
+	 * sélectionnée par le joueur
 	 *
-	 * @param destination la destination de l'unité
-	 * @param debut       la position initiale de l'unité
-	 * @param fin         la position finale de l'unité
+	 * @param debut La direction de départ de l'unité
+	 * @param fin   La direction d'arrivée de l'unité
 	 */
 	public void ajouteDeplacement(String debut, String fin) {
 		if (pasEnArriere) {
@@ -77,8 +91,12 @@ public abstract class Etat {
 				+ " -> cout du déplacement: " + coutDuDep);
 	}
 
-	// à revoir
-
+	/**
+	 * Vérifie si le joueur est revenu en arrière dans le dessin du trajet d'une
+	 * unité
+	 *
+	 * @return true s'il y'a eu retour en arrière, false sinon
+	 */
 	public boolean depEnArriere() {
 		// On vérifie si le joueur a fait un pas en arrière
 		if (Jeu.memesPositions(destinationDuCurseur.getPosition(), uniteAdeplacer.getPosition())) {
@@ -104,9 +122,9 @@ public abstract class Etat {
 	}
 
 	/**
-	 * Récupère le dernier déplacement de l'unité
-	 * 
-	 * @return le dernier déplacement
+	 * Renvoi le dernier déplacement de l'unité sélectionnée par le joueur
+	 *
+	 * @return Le dernier déplacement
 	 */
 	public Deplacement dernierDeplacement() {
 		if (listeDeplacements.size() != 0)
@@ -114,6 +132,13 @@ public abstract class Etat {
 		return null;
 	}
 
+	/**
+	 * Vérifie si la case de destination du curseur est en dehors des limites
+	 * 
+	 * @param x la valeur à ajouter à l'axe x pour déplacer le curseur
+	 * @param y la valeur à ajouter à l'axe y pour déplacer le curseur
+	 * @return true si le cursuer sera en dehors des limites, false sinon
+	 */
 	public boolean isOutOfLimit(int x, int y) {
 		boolean outOfLimitVert = getCurseurX() + x < 0 || getCurseurX() + x > Config.longueurCarteXCases - 1;
 		boolean outOfLimitHoriz = getCurseurY() + y < 0 || getCurseurY() + y > Config.longueurCarteYCases - 1;
@@ -123,7 +148,8 @@ public abstract class Etat {
 	/**
 	 * Déplace le curseur vers le haut sans sortir de la grille
 	 *
-	 * @return la même instance de la classe Etat
+	 * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+	 * @return l'instance modifiée de la classe
 	 */
 	public Etat actionHaut(Case[][] carte) {
 		if (!isOutOfLimit(0, 1)) {
@@ -135,9 +161,9 @@ public abstract class Etat {
 
 	/**
 	 * Déplace le curseur vers le bas sans sortir de la grille
-	 * 
-	 * @return la même instance de la classe Etat
-	 * 
+	 *
+	 * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+	 * @return l'instance modifiée de la classe
 	 */
 	public Etat actionBas(Case[][] carte) {
 		if (!isOutOfLimit(0, -1)) {
@@ -149,9 +175,9 @@ public abstract class Etat {
 
 	/**
 	 * Déplace le curseur vers la gauche sans sortir de la grille
-	 * 
-	 * @return la même instance de la classe Etat
-	 * 
+	 *
+	 * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+	 * @return l'instance modifiée de la classe
 	 */
 	public Etat actionGauche(Case[][] carte) {
 		if (!isOutOfLimit(-1, 0)) {
@@ -163,11 +189,10 @@ public abstract class Etat {
 
 	/**
 	 * Déplace le curseur vers la droite sans sortir de la grille
-	 * 
-	 * @return la même instance de la classe Etat
-	 * 
+	 *
+	 * @param carte Un tableau à 2 dimensions représentant la carte du jeu
+	 * @return l'instance modifiée de la classe
 	 */
-
 	public Etat actionDroite(Case[][] carte) {
 		if (!isOutOfLimit(1, 0)) {
 			deplaceCurseur(1, 0);
@@ -180,32 +205,53 @@ public abstract class Etat {
 
 	public abstract Etat actionEchap();
 
-	public abstract Etat actionG(Case[][] carte, int indexJoueurActif);
+	public abstract Etat actionY(Case[][] carte, int indexJoueurActif);
 
 	/**
-	 * Déplace le curseur en fonction des coordonnées placées en paramètre
+	 * Déplace le curseur en fonction des coordonnées passées en paramètre
 	 * 
-	 * @param x la nouvelle position du curseur sur l'axe x
-	 * @param y la nouvelle position du curseur sur l'axe y
-	 * 
+	 * @param x La nouvelle position du curseur sur l'axe x
+	 * @param y La nouvelle position du curseur sur l'axe y
 	 */
 	public void deplaceCurseur(int x, int y) {
 		curseurX += x;
 		curseurY += y;
 	}
 
+	/**
+	 * Renvoi la position du curseur sur l'axe x
+	 * 
+	 * @return Un entier correspondant à la position sur l'axe x
+	 */
 	public int getCurseurX() {
 		return curseurX;
 	}
 
+	/**
+	 * Renvoi la position du curseur sur l'axe y
+	 * 
+	 * @return Un entier correspondant à la position sur l'axe y
+	 */
 	public int getCurseurY() {
 		return curseurY;
 	}
 
+	/**
+	 * Renvoi la position du curseur sur les deux axes (x,y)
+	 * 
+	 * @return Un tableau d'entiers correspondant à la position sur les deux axes
+	 *         (x,y)
+	 */
 	public int[] getPositionCurseur() {
 		return new int[] { curseurX, curseurY };
 	}
 
+	/**
+	 * Déplace le curseur à une nouvelle position
+	 * 
+	 * @param position Un tableau d'entiers correspondant à future position du
+	 *                 curseur
+	 */
 	public void setPositionCurseur(int[] position) {
 		curseurX = position[0];
 		curseurY = position[1];
