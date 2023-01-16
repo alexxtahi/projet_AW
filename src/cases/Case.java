@@ -75,6 +75,10 @@ public class Case {
         terrain.affiche();
         if (unite != null) {
             unite.affiche();
+            // Détruire l'unité si elle n'a plus de points de vie
+            if (unite.getPointsVie() <= 0.0f) {
+                unite = null;
+            }
         }
     }
 }
