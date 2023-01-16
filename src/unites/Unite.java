@@ -40,12 +40,11 @@ public class Unite {
 	 * Générer une nouvelle unité associée à un joueur en fontion du type de l'unité
 	 * et à une position bien précise sur la carte
 	 *
-	 * @param type   le type de l'unité
-	 * @param joueur le joueur associé a l'unité
-	 * @param x      la position de l'unité sur l'axe x
-	 * @param y      la position de l'unité sur l'axe y
-	 *
-	 * @return une nouvelle unité
+	 * @param type   Le type de l'unité
+	 * @param joueur Le joueur associé a l'unité
+	 * @param x      La position de l'unité sur l'axe x
+	 * @param y      La position de l'unité sur l'axe y
+	 * @return Une nouvelle unité
 	 */
 	public static Unite genererUniteParType(String type, Joueur joueur, int x, int y) {
 		switch (type) {
@@ -70,6 +69,14 @@ public class Unite {
 		}
 	}
 
+	/**
+	 * Renvoi la liste des unités ennemies à portée d'attaque de la future case de
+	 * l'unité sélectionnée
+	 * 
+	 * @param carte       Un tableau à 2 dimensions représentant la carte du jeu
+	 * @param destination La case de destination de l'unité sélectionnée
+	 * @return Une collection d'unité ennemies proches et possible d'attaquer
+	 */
 	public ArrayList<Unite> detectEnnemisProches(Case[][] carte, Case destination) {
 		ArrayList<Unite> unitesEnnemies = new ArrayList<Unite>(4);
 		for (int i = destination.getX() - 1; i <= destination.getX() + 1; i++) {
@@ -89,10 +96,20 @@ public class Unite {
 		return unitesEnnemies;
 	}
 
+	/**
+	 * Renvoi les points de vie de l'unité
+	 * 
+	 * @return Les points de vie
+	 */
 	public float getPointsVie() {
 		return pointsVie;
 	}
 
+	/**
+	 * Renvoi les points de vie arrondis de l'unité
+	 * 
+	 * @return Les points de vie arrondis à l'entier supérieur
+	 */
 	public int getPointsVieArrondis() {
 		return (int) Math.ceil(pointsVie);
 	}
@@ -106,10 +123,11 @@ public class Unite {
 		pointsVie -= degats;
 	}
 
-	public void restorePointsVie(float pv) {
-		pointsVie += pv;
-	}
-
+	/**
+	 * Permet à une unité d'en attaquer une autre
+	 *
+	 * @param uniteAattaquer L'unité à attaquer
+	 */
 	public void attaque(Unite uniteAattaquer) {
 		float efficaciteArme = Arme.efficacites.get(this.arme).get(uniteAattaquer.getClass().getSimpleName());
 		float degats = getPointsVieArrondis() * efficaciteArme;
@@ -117,14 +135,28 @@ public class Unite {
 		System.out.println("Attaque");
 	}
 
+	/**
+	 * Renvois les points de déplacement de l'unité
+	 * 
+	 * @return Les points de déplacements
+	 */
 	public int getPointsDep() {
 		return pointsDep;
 	}
 
+	/**
+	 * Remets les points de déplacement de l'unité à leur valeur max
+	 */
 	public void resetDep() {
 		pointsDep = pointsDepMax;
 	}
 
+	/**
+	 * Permet à l'unité de regagner des points de déplacement dépensés dans le cas
+	 * d'un retour en arrière
+	 * 
+	 * @param coutDuDep Le cout à rembourser
+	 */
 	public void restorePointsDep(int coutDuDep) {
 		pointsDep += coutDuDep;
 	}
@@ -139,26 +171,57 @@ public class Unite {
 		pointsDep -= coutDuDep;
 	}
 
+	/**
+	 * Renvoi le moyen de déplacment de l'unité
+	 * 
+	 * @return Le moyen de déplacement
+	 */
 	public String getMoyenDeDep() {
 		return moyenDeDep;
 	}
 
+	/**
+	 * Renvoi le joueur associé à l'unité
+	 * 
+	 * @return L'instance de joueur associé
+	 */
 	public Joueur getJoueur() {
 		return joueur;
 	}
 
+	/**
+	 * Renvoi le prix d'achat de l'unité
+	 * 
+	 * @return Le prix
+	 */
 	public int getPrix() {
 		return prix;
 	}
 
+	/**
+	 * Renvoi la position de l'unité sur l'axe x
+	 * 
+	 * @return Un entier représentant la position sur x de l'unité
+	 */
 	public int getX() {
 		return x;
 	}
 
+	/**
+	 * Renvoi la position de l'unité sur l'axe y
+	 * 
+	 * @return Un entier représentant la position sur y de l'unité
+	 */
 	public int getY() {
 		return y;
 	}
 
+	/**
+	 * Renvoi la position de l'unité sur les deux axes (x,y)
+	 * 
+	 * @return Un tableau d'entiers correspondant à la position sur les deux axes
+	 *         (x,y)
+	 */
 	public int[] getPosition() {
 		return new int[] { x, y };
 	}
@@ -200,7 +263,7 @@ public class Unite {
 	public void affiche() {
 		if (pointsVie > 0.0f) {
 			Affichage.dessineImageDansCase(x, y, Chemins.getCheminUnite(joueur.getId(), disponible, image));
-			if (pointsVie != 10) {
+			if (pointsVie != 10.0f) {
 				Affichage.afficheTexteDansCase(x, y, getPointsVieArrondis() + "", Config.POINTS_DE_VIE_UNITES, 0.7, 0.2,
 						Config.POLICE_PV_UNITES);
 			}

@@ -33,7 +33,6 @@ public class Deplacement {
 	 * @param typeDeTerrain Le type de terrain à traverser
 	 * @return Le cout du déplacement de l'unité vers ce terrain, -1 si le terrain
 	 *         est inaccessible pour l'unité
-	 * 
 	 */
 	protected static int getCoutDuDep(String moyenDeDep, String typeDeTerrain) {
 		if (moyenDeDep.equals("Aerien")) {

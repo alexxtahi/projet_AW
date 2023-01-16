@@ -71,7 +71,7 @@ public class Jeu {
 		msg += " - Joueur actuel : " + ((indexJoueurActif == 1) ? "Rouge" : "Bleu");
 		msg += " - Argent : " + joueurActif.getArgent();
 		// Affichage
-		// Affichage.videZoneTexte(); // Je ne comprends pas l'intérêt de cette fonction
+		Affichage.videZoneTexte();
 		Affichage.afficheTexteDescriptif(msg);
 	}
 
@@ -97,7 +97,7 @@ public class Jeu {
 	/**
 	 * Utilise la matrice de string de la carte pour générer les cases
 	 *
-	 * @param caseString la matrice de String de la carte
+	 * @param caseString la matrice de string de la carte
 	 */
 	public void genererCases(String[][] carteString) {
 		for (int i = 0; i < carteString.length; i++) {
@@ -130,7 +130,7 @@ public class Jeu {
 	}
 
 	/**
-	 * Affiche dans la fenêtre l'image de chaque case
+	 * Affiche dans la fenêtre l'image de chaque case et de chaque déplacement
 	 */
 	public void afficheCases() {
 		for (Case[] ligne : carte) {
@@ -146,18 +146,27 @@ public class Jeu {
 		}
 	}
 
+	/**
+	 * Affiche tous les éléments grapiques à l'écran
+	 */
 	public void display() {
 		StdDraw.clear();
-		afficheStatutJeu();
-		afficheCases();
-		// Affiche une grille, mais n'affiche rien dans les cases
+		afficheStatutJeu(); // Affiche les détails de la partie
+		afficheCases(); // Affiche les cases de la carte
 		Affichage.dessineGrille();
 		drawGameCursor(); // Dessine le curseur sur la fenêtre
 		StdDraw.show(); // Montre a l'ecran les changement demandes
 	}
 
-	public static boolean memesPositions(int[] coords1, int[] coords2) {
-		if ((coords1[0] == coords2[0]) && (coords1[1] == coords2[1]))
+	/**
+	 * Vérifie si deux positions sont identiques
+	 * 
+	 * @param position1 Un tableau d'entier représentant la 1ère position
+	 * @param position2 Un tableau d'entier représentant la 2e position
+	 * @return true si les deux positions sont identiques, false sinon
+	 */
+	public static boolean memesPositions(int[] position1, int[] position2) {
+		if ((position1[0] == position2[0]) && (position1[1] == position2[1]))
 			return true;
 		return false;
 	}
@@ -168,10 +177,17 @@ public class Jeu {
 		display();
 	}
 
+	/**
+	 * Dessine le cursuer à l'écran en fonction de sa position
+	 */
 	public void drawGameCursor() {
 		Affichage.dessineCurseur(etat.getCurseurX(), etat.getCurseurY()); // affiche le curseau en (0,0), a modifier
 	}
 
+	/**
+	 * Permet de terminer le tour du joueur actif et de passer la main à l'autre
+	 * joueur
+	 */
 	public void changeTour() {
 		// Rendre les unités d'un joueur disponibles à la fin de son tour
 		for (Case[] ligne : carte) {
@@ -196,11 +212,15 @@ public class Jeu {
 		TestJeu.afficheArgentDesJoueurs(joueurs);
 	}
 
+	/**
+	 * Actualise la fenêtre graphique
+	 */
 	public void update() {
 
 		AssociationTouches toucheSuivante = AssociationTouches.trouveProchaineEntree(); // cette fonction boucle jusqu'a
 																						// la prochaine entree de
 																						// l'utilisateur
+		// Déplacements
 		if (toucheSuivante.isHaut())
 			etat = etat.actionHaut(carte);
 		if (toucheSuivante.isBas())
@@ -210,28 +230,30 @@ public class Jeu {
 		if (toucheSuivante.isDroite())
 			etat = etat.actionDroite(carte);
 
-		// ATTENTION ! si vous voulez detecter d'autres touches que 't',
-		// vous devez les ajouter au tableau Config.TOUCHES_PERTINENTES_CARACTERES
+		// Terminer un tour
 		if (toucheSuivante.isCaractere('t')) { // Finir le tour du joueur actif
 			String[] options = { "Oui", "Non" };
 			if (Affichage.popup("Finir le tour du joueur " + indexJoueurActif + " ?", options, true, 0) == 0) {
-				// le choix 0, "Oui", a été selectionné
 				changeTour();
 			}
 		}
 
+		// Bouger le curseur vers une unité active
 		if (toucheSuivante.isCaractere('y')) {
 			etat = etat.actionY(carte, indexJoueurActif);
 		}
 
-		if (toucheSuivante.isEntree()) { // Action de la touche entrée
-			// Sélectionner une unité
+		// Sélectionner une unité
+		if (toucheSuivante.isEntree()) {
 			TestJeu.afficheElementDansCase(etat.getCurseurX(), etat.getCurseurY(), carte);
 			etat = etat.actionEntree(carte, indexJoueurActif);
 		}
+
+		// Annuler une action
 		if (toucheSuivante.isEchap()) {
 			etat = etat.actionEchap();
 		}
+
 		// Actualisation de l'affichage
 		display();
 	}

@@ -21,7 +21,7 @@ public class TestJeu {
     /**
      * Affiche la carte sous forme de string dans la console
      *
-     * @param carteString la carte du jeu
+     * @param carte la carte du jeu
      */
     public static void afficheCarteString(String[][] carte) {
         for (int i = 0; i < carte.length; i++) {
